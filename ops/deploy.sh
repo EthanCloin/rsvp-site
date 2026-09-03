@@ -51,7 +51,7 @@ for _ in $(seq 1 20); do
     [ -S "$SOCK" ] && break
     sleep 0.5
 done
-[ -S "$SOCK" ] || { sudo systemctl status "$UNIT" --no-pager || true; die "socket never appeared at $SOCK"; }
+[ -S "$SOCK" ] || { systemctl status "$UNIT" --no-pager || true; die "socket never appeared at $SOCK"; }
 
 # Health-check through the socket, the same way nginx reaches the app.
 # Retry briefly: the socket can exist before the first worker is ready.
@@ -66,7 +66,7 @@ done
 
 log "health: HTTP $code $body"
 if [ "$code" != "200" ] || ! printf '%s' "$body" | grep -Eq '"ok"[[:space:]]*:[[:space:]]*true'; then
-    sudo systemctl status "$UNIT" --no-pager || true
+    systemctl status "$UNIT" --no-pager || true
     die "health check failed (see: journalctl -u $UNIT -n 50)"
 fi
 

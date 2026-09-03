@@ -48,7 +48,7 @@ resolves; the HTTP challenge will fail otherwise.
 
 ```sh
 sudo -iu deploy
-git clone git@github.com:<you>/rsvp-site.git /home/deploy/rsvp-site   # or the https URL
+git clone git@github.com:EthanCloin/rsvp-site.git /home/deploy/rsvp-site   # or the https URL
 cd /home/deploy/rsvp-site
 git log --oneline -1
 ```
@@ -99,13 +99,16 @@ Expected: `Active: active (running)` and a line like `Listening at:
 unix:/run/come-see/gunicorn.sock` from gunicorn. If it is `failed`, see
 Troubleshooting; `journalctl -u come-see -n 50` has the Python traceback.
 
-Check that deploy's passwordless sudo works (this is what deploy.sh uses):
+Check that deploy's passwordless sudo works (this is exactly what deploy.sh
+runs; sudoers matches the arguments verbatim):
 
 ```sh
-sudo -iu deploy sudo -n systemctl status come-see --no-pager
+sudo -iu deploy sudo -n systemctl restart come-see
+systemctl status come-see --no-pager
 ```
 
-Expected: the same status output, no password prompt.
+Expected: no password prompt, and status shows `active (running)` again with a
+fresh start time.
 
 ## 5. Verify the socket and the app directly
 

@@ -1,0 +1,86 @@
+# nginx site for come-see.ethancloin.xyz
+#
+# PRE-certbot version: listens on 80 only. Running
+#   certbot --nginx -d come-see.ethancloin.xyz
+# rewrites this file in place to add the 443 block and the 80 -> 443 redirect,
+# same as it did for booking-demo. Install as
+#   /etc/nginx/sites-available/come-see.ethancloin.xyz
+# and symlink into sites-enabled. See ops/SETUP.md.
+#
+# Layout: nginx serves /home/deploy/rsvp-site/static directly. Only /api/ goes
+# to gunicorn over the unix socket that systemd creates for come-see.service.
+
+# --- rate limit setup (POSTs only) ---------------------------------------
+# map + limit_req_zone are http-level directives. They are legal in this file
+# because nginx.conf includes sites-enabled/* from inside its http {} block.
+# The key is empty for anything that is not a POST, and nginx does not count
+# requests with an empty key, so GETs are never limited. 1m of shared memory
+# holds ~16k addresses; more than enough.
+map $request_method $come_see_post_key {
+    default "";
+    POST    $binary_remote_addr;
+}
+limit_req_zone $come_see_post_key zone=come_see_post:1m rate=10r/m;
+
+# --- gunicorn over the unix socket ---------------------------------------
+# /run/come-see is created by the unit (RuntimeDirectory=come-see, 0770,
+# deploy:www-data), so nginx running as www-data can reach the socket.
+upstream come_see_appserver {
+    server unix:/run/come-see/gunicorn.sock fail_timeout=0;
+}
+
+server {
+    listen 80;
+    server_name come-see.ethancloin.xyz;
+
+    # Static site straight from the checkout. deploy.sh does git pull, so a
+    # deploy is enough to update it; no restart needed for static changes.
+    root /home/deploy/rsvp-site/static;
+    index index.html;
+
+    # Everything that is not /api/ is a file under static/. No fallbacks.
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # events.json is edited by hand and fetched by the page on every load.
+    # no-cache = browsers revalidate each time, so edits show up immediately.
+    location = /events.json {
+        add_header Cache-Control "no-cache";
+        try_files $uri =404;
+    }
+
+    # Other assets can sit in the browser cache for a bit.
+    location ~* \.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff2?)$ {
+        expires 1h;
+        try_files $uri =404;
+    }
+
+    # Let certbot's HTTP-01 challenge through (it uses /.well-known/). The
+    # dotfile deny below would otherwise catch it. ^~ stops regex matching.
+    location ^~ /.well-known/ {
+        try_files $uri =404;
+    }
+
+    # Never serve dotfiles (.git, .env, .htaccess, editor swap files...).
+    location ~ /\. {
+        deny all;
+    }
+
+    # The API. Same proxy headers as booking-demo.
+    location /api/ {
+        # 10 POSTs/min per IP, 5 extra allowed immediately, then 429. The
+        # frontend shows "slow down" on 429. GETs pass through untouched.
+        limit_req zone=come_see_post burst=5 nodelay;
+        limit_req_status 429;
+
+        # The app caps bodies at 1 KiB itself; 4k here keeps oversized junk
+        # from ever reaching gunicorn.
+        client_max_body_size 4k;
+
+        proxy_pass http://come_see_appserver;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

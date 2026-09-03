@@ -1,0 +1,7 @@
+# Nightly come-see database backup. Install as /etc/cron.d/come-see-backup
+# (root-owned, 0644, no dots in the filename or cron ignores it):
+#   sudo install -m 0644 -o root -g root ops/backup.cron /etc/cron.d/come-see-backup
+# Runs as deploy at 03:15 every day. Output goes to /var/lib/come-see/backup.log.
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+15 3 * * * deploy /home/deploy/rsvp-site/ops/backup.sh >> /var/lib/come-see/backup.log 2>&1

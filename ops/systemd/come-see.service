@@ -1,0 +1,40 @@
+# Gunicorn for come-see (https://come-see.ethancloin.xyz)
+# Install: sudo install -m 0644 ops/systemd/come-see.service /etc/systemd/system/
+#          sudo systemctl daemon-reload && sudo systemctl enable --now come-see
+# Same shape as booking-demo.service. Paths come from CONTRACT.md.
+[Unit]
+Description=Gunicorn for come-see
+After=network.target
+
+[Service]
+User=deploy
+Group=www-data
+WorkingDirectory=/home/deploy/rsvp-site/src
+
+# /run/come-see (socket dir): deploy:www-data 0770 so nginx can connect.
+RuntimeDirectory=come-see
+RuntimeDirectoryMode=0770
+# /var/lib/come-see (SQLite file + backups): deploy:www-data 0750.
+StateDirectory=come-see
+StateDirectoryMode=0750
+# Socket and db files come out 0660 (group can read/write, others nothing).
+UMask=0007
+
+Environment=RSVP_DB_PATH=/var/lib/come-see/rsvps.db
+Environment=RSVP_EVENTS_PATH=/home/deploy/rsvp-site/static/events.json
+# gunicorn_config.py defaults to this already; set here so the unit is the
+# one place paths live. Sizing knobs: GUNICORN_PROCESSES/THREADS/TIMEOUT.
+Environment=GUNICORN_BIND=unix:/run/come-see/gunicorn.sock
+
+ExecStart=/home/deploy/rsvp-site/.venv/bin/gunicorn -c /home/deploy/rsvp-site/src/gunicorn_config.py "app:create_app()"
+
+Restart=on-failure
+RestartSec=3
+
+# Cheap hardening. These do not touch the socket dir, the state dir, or the
+# checkout under /home/deploy, so nothing here can break the app.
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

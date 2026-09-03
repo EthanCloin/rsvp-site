@@ -1,0 +1,18 @@
+# Let deploy restart/inspect come-see and reload nginx without a password.
+# That is all ops/deploy.sh needs. Nothing else is granted.
+#
+# Install:  sudo install -m 0440 -o root -g root ops/sudoers-come-see /etc/sudoers.d/come-see
+# Check:    sudo visudo -cf /etc/sudoers.d/come-see
+#
+# sudoers matches arguments exactly, so use `sudo systemctl restart come-see`
+# (not `come-see.service`). Both systemctl paths are listed because /bin is a
+# symlink to /usr/bin on Ubuntu and sudo compares the path it resolved from PATH.
+Cmnd_Alias COME_SEE_OPS = \
+    /usr/bin/systemctl restart come-see, \
+    /usr/bin/systemctl status come-see, \
+    /usr/bin/systemctl reload nginx, \
+    /bin/systemctl restart come-see, \
+    /bin/systemctl status come-see, \
+    /bin/systemctl reload nginx
+
+deploy ALL=(root) NOPASSWD: COME_SEE_OPS

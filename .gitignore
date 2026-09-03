@@ -7,3 +7,4 @@ instance/
 .pytest_cache/
 node_modules/
 test-results/
+tests/frontend/screenshots/

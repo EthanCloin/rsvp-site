@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Come see</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="page-header">
+    <h1 id="page-title">Come see</h1>
+    <p id="page-intro" class="intro"></p>
+  </header>
+
+  <main id="main">
+    <p id="status" class="status" aria-live="polite">Loading events…</p>
+    <div id="events"></div>
+  </main>
+
+  <footer class="page-footer">
+    <p id="tz-note" class="tz-note" hidden></p>
+    <noscript><p>This page needs JavaScript to load the events and let you RSVP.</p></noscript>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

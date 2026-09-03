@@ -26,15 +26,21 @@ def known_event_ids(path=None):
     if path is None:
         path = current_app.config["RSVP_EVENTS_PATH"]
 
-    try:
-        st = os.stat(path)
-    except OSError as exc:
-        log.error("cannot stat events file %s: %s", path, exc)
-        return frozenset()
-    signature = (st.st_mtime_ns, st.st_size, st.st_ino)
-
     with _lock:
         cached = _cache.get(path)
+
+        # Missing or unreadable (a deploy mid-swap, say): keep the last good
+        # list if there is one, log once per change rather than per request.
+        try:
+            st = os.stat(path)
+        except OSError as exc:
+            if cached is None or cached[0] is not None:
+                log.error("cannot stat events file %s: %s", path, exc)
+            ids = cached[1] if cached is not None else frozenset()
+            _cache[path] = (None, ids)
+            return ids
+        signature = (st.st_mtime_ns, st.st_size, st.st_ino)
+
         if cached is not None and cached[0] == signature:
             return cached[1]
 
@@ -42,8 +48,9 @@ def known_event_ids(path=None):
             ids = _load_ids(path)
         except (OSError, ValueError) as exc:
             log.error("cannot load events file %s: %s", path, exc)
-            # keep the last good list if we have one
-            return cached[1] if cached is not None else frozenset()
+            # keep the last good list, and remember this signature so the
+            # broken file is not re-parsed and re-logged on every request
+            ids = cached[1] if cached is not None else frozenset()
 
         _cache[path] = (signature, ids)
         return ids

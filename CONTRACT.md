@@ -101,11 +101,21 @@ success shape below **without storing anything**, so bots see nothing unusual.
 Validation of `display_name`, applied in this order:
 
 1. Must be a string. Otherwise `400 invalid_name`.
-2. Trim leading and trailing whitespace; collapse internal runs of whitespace to one space.
-3. Reject if empty or longer than 40 characters after step 2: `400 invalid_name`.
-4. Reject if it contains any control character (Unicode category `Cc`): `400 invalid_name`.
+2. Normalise to Unicode NFC. Trim leading and trailing whitespace; collapse
+   internal runs of whitespace to one space. "Whitespace" here is ASCII
+   whitespace (space, tab, CR, LF, FF, VT) plus the Unicode separator
+   categories `Zs`, `Zl`, `Zp`. It is deliberately not `\s`, which would also
+   swallow the C0 controls 1C-1F and U+0085 and hide them from step 4.
+3. Reject if empty or longer than 40 code points after step 2: `400 invalid_name`.
+4. Reject if it contains any character in Unicode category `Cc` (control),
+   `Cf` (format: zero-width space, BOM, bidi overrides...), `Cs`, `Co`, or
+   `Cn`: `400 invalid_name`. The one exception is U+200D zero width joiner,
+   so emoji sequences still work.
 5. Reject if the same event already has this name, compared case-insensitively
-   after step 2: `409 duplicate`.
+   (`str.casefold`) after step 2: `409 duplicate`.
+6. Reject if the event already has 500 RSVPs (`RSVP_MAX_PER_EVENT` in app
+   config): `409 event_full`. This exists only so one bored visitor cannot make
+   the page unbounded; nginx's rate limit makes it slow to reach.
 
 Other responses:
 
@@ -115,6 +125,8 @@ Other responses:
 - `413` when the body exceeds 1 KiB (Flask `MAX_CONTENT_LENGTH = 1024`).
 - `429` comes from nginx (`limit_req`), never from the app. The frontend must
   handle it with a "slow down" message.
+- Any other path under `/api/` is a JSON `404 not_found` for GET and a JSON
+  `405 method_not_allowed` for other methods.
 
 ### Not in the API
 
@@ -133,9 +145,9 @@ is no delete; moderation is `sqlite3 /var/lib/come-see/rsvps.db` on the box.
   day, time range in the visitor's local timezone, location, description.
 - Per card: fetch the RSVP list on load, show names and count, and a form with
   one text input (`maxlength="40"`) plus the hidden `website` honeypot.
-- On submit: `POST` JSON, then re-fetch the list. Map `409` to "that name is
-  already on the list", `400` to the server's message, `429` to "slow down and
-  try again in a minute".
+- On submit: `POST` JSON, then re-fetch the list. Map `409 duplicate` to "that
+  name is already on the list", `409 event_full` and `400` to the server's
+  message, `429` to "slow down and try again in a minute".
 - "Add to calendar" per card offers two things, both generated client-side:
   a downloaded `.ics` file (UTC `DTSTART`/`DTEND`, `UID` = `<id>@come-see.ethancloin.xyz`)
   and a Google Calendar template link

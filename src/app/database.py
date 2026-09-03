@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from datetime import datetime, timezone
 
@@ -19,9 +20,7 @@ def get_db():
     # if a single request hits the db multiple times, it would reuse the
     # db already present in 'g'
     if "db" not in g:
-        g.db = sqlite3.connect(
-            current_app.config["RSVP_DB_PATH"], detect_types=sqlite3.PARSE_DECLTYPES
-        )
+        g.db = sqlite3.connect(current_app.config["RSVP_DB_PATH"])
         g.db.row_factory = sqlite3.Row
 
     return g.db
@@ -38,6 +37,11 @@ def ensure_schema(app):
     """Create the rsvps table and index if they do not exist. Safe to run every start."""
     with app.app_context():
         get_db().executescript(SCHEMA)
+    # A read-only file (wrong owner after a restore, say) would otherwise start
+    # fine and fail on the first POST. Say so at startup, in the journal.
+    path = app.config["RSVP_DB_PATH"]
+    if not os.access(path, os.W_OK) or not os.access(os.path.dirname(path), os.W_OK):
+        raise RuntimeError(f"database {path} (or its directory) is not writable by this user")
 
 
 def utcnow_iso():

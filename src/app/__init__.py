@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, abort, jsonify, request, send_from_directory
 from werkzeug.exceptions import HTTPException
 
 # <repo>/static, resolved from this file so it works from any cwd.
@@ -28,19 +28,15 @@ def create_app(test_config=None):
         ),
         MAX_CONTENT_LENGTH=1024,
     )
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        # load the test config if passed in
+    if test_config is not None:
         app.config.from_mapping(test_config)
 
-    # ensure the instance folder (and wherever the db lives) exists
+    # ensure the instance folder (and wherever the db lives) exists. In
+    # production /var/lib/come-see already exists (systemd StateDirectory);
+    # if it cannot be created here, fail loudly at startup rather than on the
+    # first request.
     for directory in (app.instance_path, os.path.dirname(app.config["RSVP_DB_PATH"])):
-        try:
-            os.makedirs(directory, exist_ok=True)
-        except OSError:
-            pass
+        os.makedirs(directory, exist_ok=True)
 
     from . import database, rsvps
 
@@ -66,11 +62,17 @@ def register_error_handlers(app):
 
 def register_static_site(app):
     """
-    Local development only: serve <repo>/static at / so `flask --app app run`
-    gives the whole site. In production nginx serves static and only /api/
-    reaches gunicorn, so these routes are never hit there. Flask prefers the
-    more specific /api/ rules over the catch-all, so they do not interfere.
+    Serve <repo>/static at / so `flask --app app run` gives the whole site
+    during development. In production nginx serves static and only /api/
+    reaches gunicorn, so the static routes are only reachable locally. The
+    /api/ catch-all below is what production can hit: an unknown GET under
+    /api/ is a JSON 404 instead of an attempt to serve a file, and a wrong
+    method on any /api/ path stays a JSON 405.
     """
+
+    @app.get("/api/<path:_unknown>")
+    def unknown_api(_unknown):
+        abort(404)
 
     @app.get("/")
     def index():

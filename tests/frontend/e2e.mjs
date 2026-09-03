@@ -8,10 +8,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { startServer } from './stub-server.mjs';
+import { startServer, EVENTS_FIXTURE } from './stub-server.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const STATIC_DIR = path.resolve(HERE, '../../static');
 const SHOTS = path.join(HERE, 'screenshots');
 const TZ = 'America/New_York';
 
@@ -40,7 +39,9 @@ function check(name, fn) {
     (err) => { console.log(`  FAIL ${name}`); throw err; });
 }
 
-const events = JSON.parse(await fs.readFile(path.join(STATIC_DIR, 'events.json'), 'utf8'));
+// Expectations come from the test fixture, which the stub server also serves at /events.json.
+// The literal headings/ids/times below match fixtures/events.json, not the live static/events.json.
+const events = JSON.parse(await fs.readFile(EVENTS_FIXTURE, 'utf8'));
 const sorted = [...events.events].sort((a, b) => new Date(a.start) - new Date(b.start));
 const first = sorted[0];
 const noEnd = sorted.find((e) => !e.end);

@@ -8,7 +8,7 @@
   var TWO_HOURS_MS = 2 * 60 * 60 * 1000;
   var GENERIC_ERROR = "Something went wrong. Please try again.";
 
-  var state = { name: loadName(), events: [] };
+  var state = { name: loadName() };
   var cards = {}; // id -> { event, listEl, countEl, form, input, errorEl, youEl }
 
   /* ---------- helpers ---------- */
@@ -106,7 +106,6 @@
         out.push(cur);
         cur = ' ';
         curBytes = 1;
-        limit = 75;
       }
       cur += ch;
       curBytes += n;
@@ -176,12 +175,16 @@
   }
 
   function errorMessageFor(res) {
-    if (res.status === 409) return Promise.resolve("That name is already on the list");
     if (res.status === 429) return Promise.resolve("Slow down and try again in a minute");
-    if (res.status === 400) {
+    if (res.status === 409 || res.status === 400) {
       return res.json().then(function (body) {
+        if (res.status === 409 && (!body || body.error !== 'event_full')) {
+          return "That name is already on the list";
+        }
         return body && typeof body.message === 'string' && body.message ? body.message : GENERIC_ERROR;
-      }, function () { return GENERIC_ERROR; });
+      }, function () {
+        return res.status === 409 ? "That name is already on the list" : GENERIC_ERROR;
+      });
     }
     return Promise.resolve(GENERIC_ERROR);
   }
@@ -229,7 +232,7 @@
 
     postRsvp(card.event.id, name, card.hp.value || '')
       .then(function (res) {
-        if (res.status === 201 || res.ok) {
+        if (res.ok) {
           var previous = state.name;
           state.name = name;
           saveName(name);
@@ -349,7 +352,6 @@
     note.textContent = 'Times are shown in your local time zone' + (abbr ? ' (' + abbr + ')' : '') + '.';
     note.hidden = false;
 
-    state.events = events;
     Object.keys(cards).forEach(function (id) { refreshList(cards[id]); });
   }
 
@@ -360,7 +362,8 @@
     status.hidden = false;
   }
 
-  fetch('events.json', { headers: { 'Accept': 'application/json' } })
+  // no-cache = always revalidate, so an edited events.json shows up on the next load
+  fetch('events.json', { cache: 'no-cache', headers: { 'Accept': 'application/json' } })
     .then(function (res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();

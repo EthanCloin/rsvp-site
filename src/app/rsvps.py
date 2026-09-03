@@ -1,7 +1,7 @@
-import re
+import json
 import unicodedata
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from app import events
 from app.database import get_db, utcnow_iso
@@ -9,9 +9,19 @@ from app.database import get_db, utcnow_iso
 bp = Blueprint("rsvps", __name__, url_prefix="/api")
 
 MAX_NAME_LENGTH = 40
+DEFAULT_MAX_RSVPS_PER_EVENT = 500
 
-# any run of Unicode whitespace
-_WHITESPACE_RE = re.compile(r"\s+")
+# Characters treated as whitespace for trimming and collapsing: ASCII
+# whitespace plus the Unicode separator categories (Zs, Zl, Zp). Deliberately
+# not str.isspace()/\s, which also match the C0 controls 1C-1F and NEL (U+0085)
+# and would launder them past the control-character check below.
+_ASCII_WS = set(" \t\n\r\f\v")
+
+# Rejected outright: controls (Cc), format chars such as zero-width space and
+# bidi overrides (Cf), surrogates, private use, unassigned. ZWJ is allowed so
+# emoji sequences like a family or a flag keep working.
+_REJECTED_CATEGORIES = {"Cc", "Cf", "Cs", "Co", "Cn"}
+_ALLOWED_FORMAT_CHARS = {"\u200d"}  # zero width joiner
 
 
 def error(status, code, message):
@@ -50,19 +60,26 @@ def create_rsvp(event_id):
         return unknown_event(event_id)
 
     # reading the body is what enforces MAX_CONTENT_LENGTH (413), whatever the
-    # content type; get_json() would skip the read for a non-JSON content type
-    request.get_data()
-    body = request.get_json(silent=True)
+    # content type. Parsed by hand rather than get_json(): deeply nested junk
+    # like 1000 "[" raises RecursionError, which get_json(silent=True) does
+    # not swallow.
+    raw = request.get_data()
+    body = None
+    if request.is_json:
+        try:
+            body = json.loads(raw)
+        except (ValueError, RecursionError):
+            body = None
     if not isinstance(body, dict):
         return error(400, "invalid_json", "The request body must be a JSON object.")
 
     name = body.get("display_name")
 
     # honeypot: browsers never fill `website`. pretend it worked, store nothing.
-    if body.get("website"):
-        if isinstance(name, str):
-            name = normalise_name(name)
-        return jsonify(event_id=event_id, display_name=name, created_at=utcnow_iso()), 201
+    website = body.get("website")
+    if website is not None and website != "":
+        echoed = normalise_name(name) if isinstance(name, str) else ""
+        return jsonify(event_id=event_id, display_name=echoed, created_at=utcnow_iso()), 201
 
     # 1. must be a string
     if not isinstance(name, str):
@@ -79,9 +96,9 @@ def create_rsvp(event_id):
             400, "invalid_name", f"Names can be at most {MAX_NAME_LENGTH} characters."
         )
 
-    # 4. control characters
-    if any(unicodedata.category(c) == "Cc" for c in name):
-        return error(400, "invalid_name", "Names cannot contain control characters.")
+    # 4. control, format, and other invisible characters
+    if any(_is_rejected_char(c) for c in name):
+        return error(400, "invalid_name", "Names cannot contain invisible or control characters.")
 
     # 5. duplicate, case-insensitive. SQLite's lower() is ASCII-only, so compare
     # in Python. BEGIN IMMEDIATE holds the write lock across check + insert so
@@ -96,6 +113,12 @@ def create_rsvp(event_id):
         db.rollback()
         return error(409, "duplicate", "That name is already on the list for this event.")
 
+    # 6. per-event cap, so one bored visitor cannot make the page unbounded
+    max_per_event = current_app.config.get("RSVP_MAX_PER_EVENT", DEFAULT_MAX_RSVPS_PER_EVENT)
+    if len(existing) >= max_per_event:
+        db.rollback()
+        return error(409, "event_full", "This list is full.")
+
     created_at = utcnow_iso()
     db.execute(
         "INSERT INTO rsvps (event_id, display_name, created_at) VALUES (?, ?, ?)",
@@ -106,6 +129,31 @@ def create_rsvp(event_id):
     return jsonify(event_id=event_id, display_name=name, created_at=created_at), 201
 
 
+def _is_whitespace(c):
+    return c in _ASCII_WS or unicodedata.category(c).startswith("Z")
+
+
+def _is_rejected_char(c):
+    if c in _ALLOWED_FORMAT_CHARS:
+        return False
+    return unicodedata.category(c) in _REJECTED_CATEGORIES
+
+
 def normalise_name(name):
-    """Strip, then collapse any run of Unicode whitespace to a single space."""
-    return _WHITESPACE_RE.sub(" ", name.strip())
+    """
+    NFC-normalise, strip, then collapse any run of whitespace (see _is_whitespace)
+    to a single space. NFC means "José" typed as e + combining accent and as the
+    precomposed é compare equal for the duplicate check.
+    """
+    name = unicodedata.normalize("NFC", name)
+    out = []
+    in_space = False
+    for c in name:
+        if _is_whitespace(c):
+            in_space = True
+            continue
+        if in_space and out:
+            out.append(" ")
+        in_space = False
+        out.append(c)
+    return "".join(out)

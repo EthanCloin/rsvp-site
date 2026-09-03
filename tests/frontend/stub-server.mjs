@@ -1,5 +1,7 @@
 // In-memory stand-in for nginx + the Flask app, for frontend tests.
 // Serves ../../static at / and implements the CONTRACT.md API in memory.
+// /events.json is served from ./fixtures/events.json (not static/events.json) so the
+// suite keeps passing after the owner replaces the sample events with real ones.
 // Run standalone:  node tests/frontend/stub-server.mjs [port]   (default 8080)
 // Special case:    a display_name of "ratelimit" returns 429 like nginx's limit_req would.
 
@@ -8,7 +10,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const STATIC_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../static');
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const STATIC_DIR = path.resolve(HERE, '../../static');
+export const EVENTS_FIXTURE = path.join(HERE, 'fixtures', 'events.json');
 const MAX_BODY = 1024;
 
 const MIME = {
@@ -33,8 +37,8 @@ function normalizeName(s) {
   return s.trim().replace(/\s+/g, ' ');
 }
 
-export async function startServer({ port = 0, staticDir = STATIC_DIR } = {}) {
-  const eventsRaw = await fs.readFile(path.join(staticDir, 'events.json'), 'utf8');
+export async function startServer({ port = 0, staticDir = STATIC_DIR, eventsFile = EVENTS_FIXTURE } = {}) {
+  const eventsRaw = await fs.readFile(eventsFile, 'utf8');
   const eventIds = new Set(JSON.parse(eventsRaw).events.map((e) => e.id));
   const rsvps = new Map(); // event_id -> [{display_name, created_at}]
 
@@ -124,6 +128,10 @@ export async function startServer({ port = 0, staticDir = STATIC_DIR } = {}) {
     }
     let rel = decodeURIComponent(p);
     if (rel.endsWith('/')) rel += 'index.html';
+    if (rel === '/events.json') {
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' });
+      return res.end(req.method === 'HEAD' ? undefined : eventsRaw);
+    }
     const file = path.resolve(staticDir, '.' + rel);
     if (!file.startsWith(staticDir + path.sep) && file !== staticDir) {
       res.writeHead(404); return res.end('404');
@@ -155,5 +163,5 @@ export async function startServer({ port = 0, staticDir = STATIC_DIR } = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const port = Number(process.argv[2] || 8080);
   const s = await startServer({ port });
-  console.log(`stub server on ${s.url} serving ${STATIC_DIR}`);
+  console.log(`stub server on ${s.url} serving ${STATIC_DIR} (events.json from ${EVENTS_FIXTURE})`);
 }

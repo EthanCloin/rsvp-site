@@ -40,6 +40,17 @@
     return normalizeName(a).toLowerCase() === normalizeName(b).toLowerCase();
   }
 
+  // events.json is ours, but keep javascript:/data: out of an href regardless.
+  function safeUrl(u) {
+    if (typeof u !== 'string' || !u) return null;
+    try {
+      var parsed = new URL(u, location.href);
+      return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function parseDate(iso) {
     var d = new Date(iso);
     return isNaN(d.getTime()) ? null : d;
@@ -299,11 +310,29 @@
       text: 'Add to Google Calendar'
     });
 
+    // Official event page and, for ticketed events, where to buy. Both optional.
+    var ticketsUrl = safeUrl(ev.tickets_url);
+    var eventUrl = safeUrl(ev.url);
+    var links = [];
+    if (ticketsUrl) {
+      links.push(el('a', {
+        class: 'ticket-link', href: ticketsUrl, target: '_blank',
+        rel: 'noopener noreferrer', text: 'Get tickets'
+      }));
+    }
+    if (eventUrl) {
+      links.push(el('a', {
+        class: 'event-link', href: eventUrl, target: '_blank',
+        rel: 'noopener noreferrer', text: 'Event page'
+      }));
+    }
+
     var article = el('article', { class: 'event', id: 'event-' + id, 'aria-labelledby': titleId }, [
       el('h3', { class: 'event-title', id: titleId, text: ev.title || id }),
       el('p', { class: 'event-meta' }, [el('span', { class: 'event-time', text: timeRange(range) })]),
       ev.location ? el('p', { class: 'event-meta event-where', text: ev.location }) : null,
       ev.description ? el('p', { class: 'event-desc', text: ev.description }) : null,
+      links.length ? el('p', { class: 'event-links' }, links) : null,
       el('section', { class: 'rsvps', 'aria-label': 'RSVPs' }, [card.countEl, card.listEl]),
       card.youEl,
       card.form,

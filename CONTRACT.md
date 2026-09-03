@@ -45,7 +45,12 @@ reads it only to validate event ids on write.
       "end": "2026-10-09T21:30:00-04:00",
       "location": "Mom's house",
       "address": "123 Main St, Hometown, FL 32000",
-      "description": "Bring nothing. Seriously."
+      "description": "Bring nothing. Seriously.",
+      "url": "https://example.com/event",
+      "tickets_url": "https://example.com/event/tickets",
+      "image": "img/fri-dinner.jpg",
+      "image_alt": "Flyer for the dinner",
+      "image_credit": "Official event flyer (example.com)"
     }
   ]
 }
@@ -58,6 +63,21 @@ Rules:
   absent the frontend assumes two hours.
 - `location` is the short label shown on the card; `address` is what goes into
   the calendar entry. Both optional.
+- `url` is the official event or venue page. Optional. The frontend renders it
+  as a link on the card so a visitor can go to the source.
+- `tickets_url` is the direct ticket or registration page, when the event has
+  one. Optional and independent of `url`: an event may carry either, both, or
+  neither. Free events omit it.
+- `image` is a path relative to the static root (so `img/foo.jpg` resolves to
+  `static/img/foo.jpg`). Optional. Assets are committed to the repo and served
+  by nginx like any other static file; the frontend makes no external image
+  requests. Where an event has no flyer, a locally rendered map of `address`
+  stands in.
+- `image_alt` is the alt text for `image`, and `image_credit` names its source.
+  Both required whenever `image` is set: `image_credit` is how map-tile and
+  flyer attribution stays attached to the asset.
+- Unknown keys are ignored. The app reads only `id` from this file, so adding
+  presentational fields never affects the API.
 - The frontend sorts by `start`. The file order does not matter.
 
 ## SQLite schema
@@ -143,6 +163,9 @@ is no delete; moderation is `sqlite3 /var/lib/come-see/rsvps.db` on the box.
 
 - Fetch `events.json`, sort by `start`, render one card per event with the
   day, time range in the visitor's local timezone, location, description.
+- Per card, when present: a "Get tickets" link to `tickets_url` and an "Event
+  page" link to `url`, both `target="_blank" rel="noopener noreferrer"`. Only
+  `http:` and `https:` hrefs are rendered; anything else is dropped.
 - Per card: fetch the RSVP list on load, show names and count, and a form with
   one text input (`maxlength="40"`) plus the hidden `website` honeypot.
 - On submit: `POST` JSON, then re-fetch the list. Map `409 duplicate` to "that

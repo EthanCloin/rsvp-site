@@ -99,6 +99,16 @@ h1 {
 .event-time { font-weight: 600; color: var(--text); }
 .event-desc { margin: 0.75rem 0 0; }
 
+/* Official event page / ticket links */
+.event-links { margin: 0.75rem 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.95rem; }
+.event-links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.event-links a:hover { text-decoration: underline; }
+.event-links .ticket-link {
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+}
+
 /* RSVP list */
 .rsvps { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px dashed var(--line); }
 .rsvp-count { margin: 0 0 0.4rem; font-weight: 600; }

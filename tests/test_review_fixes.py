@@ -115,3 +115,48 @@ def test_bad_json_logged_once_not_per_request(app, events_path, caplog):
         for _ in range(3):
             assert events.known_event_ids() == {"fri-dinner", "sat-coffee"}
     assert caplog.text.count("cannot load events file") == 1
+
+
+def test_startup_adds_token_column_to_an_old_database(tmp_path, events_path):
+    """A database written before the token column keeps its rows and gains the column."""
+    import sqlite3
+
+    db_path = tmp_path / "old.db"
+    old = sqlite3.connect(db_path)
+    old.executescript(
+        """
+        CREATE TABLE rsvps (
+          id           INTEGER PRIMARY KEY,
+          event_id     TEXT    NOT NULL,
+          display_name TEXT    NOT NULL,
+          created_at   TEXT    NOT NULL
+        );
+        CREATE INDEX rsvps_event_id ON rsvps (event_id);
+        INSERT INTO rsvps (event_id, display_name, created_at)
+        VALUES ('fri-dinner', 'Old Sam', '2026-10-01T14:03:00Z');
+        """
+    )
+    old.commit()
+    old.close()
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "RSVP_DB_PATH": str(db_path),
+            "RSVP_EVENTS_PATH": str(events_path),
+        }
+    )
+    client = app.test_client()
+
+    listed = client.get("/api/events/fri-dinner/rsvps").get_json()
+    assert [r["display_name"] for r in listed["rsvps"]] == ["Old Sam"]
+
+    # new rows get a token; the pre-existing row has none and stays put
+    body = client.post("/api/events/fri-dinner/rsvps", json={"display_name": "New Sam"}).get_json()
+    assert body["token"]
+    assert client.delete(
+        f"/api/events/fri-dinner/rsvps/{body['rsvp_id']}", json={"token": body["token"]}
+    ).status_code == 200
+    assert client.delete(
+        "/api/events/fri-dinner/rsvps/1", json={"token": "anything"}
+    ).status_code == 403

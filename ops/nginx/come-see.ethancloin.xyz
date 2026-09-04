@@ -10,17 +10,18 @@
 # Layout: nginx serves /home/deploy/rsvp-site/static directly. Only /api/ goes
 # to gunicorn over the unix socket that systemd creates for come-see.service.
 
-# --- rate limit setup (POSTs only) ---------------------------------------
+# --- rate limit setup (writes only) --------------------------------------
 # map + limit_req_zone are http-level directives. They are legal in this file
 # because nginx.conf includes sites-enabled/* from inside its http {} block.
-# The key is empty for anything that is not a POST, and nginx does not count
+# The key is empty for anything that is not a write, and nginx does not count
 # requests with an empty key, so GETs are never limited. 1m of shared memory
 # holds ~16k addresses; more than enough.
-map $request_method $come_see_post_key {
+map $request_method $come_see_write_key {
     default "";
     POST    $binary_remote_addr;
+    DELETE  $binary_remote_addr;
 }
-limit_req_zone $come_see_post_key zone=come_see_post:1m rate=10r/m;
+limit_req_zone $come_see_write_key zone=come_see_write:1m rate=10r/m;
 
 # --- gunicorn over the unix socket ---------------------------------------
 # /run/come-see is created by the unit (RuntimeDirectory=come-see, 0770,
@@ -69,9 +70,10 @@ server {
 
     # The API. Same proxy headers as booking-demo.
     location /api/ {
-        # 10 POSTs/min per IP, 5 extra allowed immediately, then 429. The
-        # frontend shows "slow down" on 429. GETs pass through untouched.
-        limit_req zone=come_see_post burst=5 nodelay;
+        # 10 writes/min per IP (POST and DELETE together), 5 extra allowed
+        # immediately, then 429. The frontend shows "slow down" on 429. GETs
+        # pass through untouched.
+        limit_req zone=come_see_write burst=5 nodelay;
         limit_req_status 429;
 
         # The app caps bodies at 1 KiB itself; 4k here keeps oversized junk

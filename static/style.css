@@ -421,6 +421,7 @@ h1 {
 
 .you-going {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
   margin: 0;
@@ -429,6 +430,23 @@ h1 {
   font-weight: 700;
   color: var(--green);
 }
+
+/* Quiet by design: leaving is always available, never the thing you reach for. */
+.remove-btn {
+  margin-left: auto;
+  padding: 4px 2px;
+  font: inherit;
+  font-size: 14.4px;
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--faint);
+  border-radius: 0;
+  cursor: pointer;
+}
+.remove-btn:hover { color: var(--text); border-bottom-color: var(--muted); }
+.remove-btn:disabled { opacity: 0.6; cursor: progress; }
 
 .form-error {
   margin: 0;

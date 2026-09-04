@@ -33,10 +33,12 @@ def test_post_success_then_listed(client):
     res = post(client, display_name="Sam", website="")
     assert res.status_code == 201
     body = res.get_json()
-    assert set(body) == {"event_id", "display_name", "created_at"}
+    assert set(body) == {"event_id", "rsvp_id", "display_name", "created_at", "token"}
     assert body["event_id"] == "fri-dinner"
     assert body["display_name"] == "Sam"
     assert TIMESTAMP_RE.match(body["created_at"])
+    assert isinstance(body["rsvp_id"], int) and body["rsvp_id"] > 0
+    assert isinstance(body["token"], str) and len(body["token"]) >= 20
 
     res = client.get(URL)
     assert res.status_code == 200
@@ -167,10 +169,12 @@ def test_honeypot_returns_201_and_stores_nothing(client):
     res = post(client, display_name="Bot", website="http://spam.example")
     assert res.status_code == 201
     body = res.get_json()
-    assert set(body) == {"event_id", "display_name", "created_at"}
+    # identical shape to a real success, so a bot cannot tell it stored nothing
+    assert set(body) == {"event_id", "rsvp_id", "display_name", "created_at", "token"}
     assert body["event_id"] == "fri-dinner"
     assert body["display_name"] == "Bot"
     assert TIMESTAMP_RE.match(body["created_at"])
+    assert isinstance(body["token"], str) and len(body["token"]) >= 20
     assert client.get(URL).get_json() == {"event_id": "fri-dinner", "count": 0, "rsvps": []}
 
 
@@ -196,3 +200,140 @@ def test_body_at_limit_is_accepted(client):
     assert len(data) == 1024
     res = client.post(URL, data=data, content_type="application/json")
     assert res.status_code == 201
+
+
+# ---------- deleting your own RSVP ----------
+
+
+def create(client, name="Sam", url=URL):
+    """POST and hand back the (rsvp_id, token) the browser would keep."""
+    body = client.post(url, json={"display_name": name}).get_json()
+    return body["rsvp_id"], body["token"]
+
+
+def delete_url(rsvp_id, event_id="fri-dinner"):
+    return f"/api/events/{event_id}/rsvps/{rsvp_id}"
+
+
+def test_delete_with_token_removes_the_name(client):
+    rsvp_id, token = create(client)
+    res = client.delete(delete_url(rsvp_id), json={"token": token})
+    assert res.status_code == 200
+    assert res.get_json() == {
+        "event_id": "fri-dinner",
+        "rsvp_id": rsvp_id,
+        "display_name": "Sam",
+        "deleted": True,
+    }
+    assert names(client) == []
+
+
+def test_delete_frees_the_name_for_reuse(client):
+    rsvp_id, token = create(client)
+    assert post(client, display_name="Sam").status_code == 409
+    client.delete(delete_url(rsvp_id), json={"token": token})
+    assert post(client, display_name="Sam").status_code == 201
+    assert names(client) == ["Sam"]
+
+
+def test_delete_leaves_other_rsvps_alone(client):
+    keep_id, keep_token = create(client, "Alice")
+    drop_id, drop_token = create(client, "Bob")
+    assert client.delete(delete_url(drop_id), json={"token": drop_token}).status_code == 200
+    assert names(client) == ["Alice"]
+    # the surviving row's token still works
+    assert client.delete(delete_url(keep_id), json={"token": keep_token}).status_code == 200
+
+
+def test_delete_with_wrong_token_is_forbidden(client):
+    rsvp_id, token = create(client)
+    res = client.delete(delete_url(rsvp_id), json={"token": token + "x"})
+    assert res.status_code == 403
+    assert res.get_json()["error"] == "invalid_token"
+    assert names(client) == ["Sam"]
+
+
+def test_delete_with_another_rsvps_token_is_forbidden(client):
+    mine_id, _ = create(client, "Alice")
+    _, other_token = create(client, "Bob")
+    res = client.delete(delete_url(mine_id), json={"token": other_token})
+    assert res.status_code == 403
+    assert names(client) == ["Alice", "Bob"]
+
+
+def test_delete_untokenised_row_is_forbidden(client, app):
+    """Rows written before the token column existed cannot be deleted over the API."""
+    rsvp_id, token = create(client)
+    with app.app_context():
+        from app.database import get_db
+
+        db = get_db()
+        db.execute("UPDATE rsvps SET token = NULL WHERE id = ?", (rsvp_id,))
+        db.commit()
+    res = client.delete(delete_url(rsvp_id), json={"token": token})
+    assert res.status_code == 403
+    assert res.get_json()["error"] == "invalid_token"
+    assert names(client) == ["Sam"]
+
+
+def test_delete_unknown_rsvp_id(client):
+    res = client.delete(delete_url(999), json={"token": "whatever"})
+    assert res.status_code == 404
+    assert res.get_json()["error"] == "not_found"
+
+
+def test_delete_rsvp_from_another_event(client):
+    """An id is only deletable through the event it belongs to."""
+    rsvp_id, token = create(client)
+    res = client.delete(delete_url(rsvp_id, "sat-coffee"), json={"token": token})
+    assert res.status_code == 404
+    assert res.get_json()["error"] == "not_found"
+    assert names(client) == ["Sam"]
+
+
+def test_delete_unknown_event(client):
+    res = client.delete("/api/events/nope/rsvps/1", json={"token": "x"})
+    assert res.status_code == 404
+    assert res.get_json()["error"] == "unknown_event"
+
+
+@pytest.mark.parametrize("body", [{}, {"token": ""}, {"token": 42}, {"token": None}])
+def test_delete_without_a_usable_token(client, body):
+    rsvp_id, _ = create(client)
+    res = client.delete(delete_url(rsvp_id), json=body)
+    assert res.status_code == 400
+    assert res.get_json()["error"] == "invalid_json"
+    assert names(client) == ["Sam"]
+
+
+def test_delete_non_object_body(client):
+    rsvp_id, _ = create(client)
+    res = client.delete(
+        delete_url(rsvp_id), data=json.dumps(["token"]), content_type="application/json"
+    )
+    assert res.status_code == 400
+    assert res.get_json()["error"] == "invalid_json"
+
+
+def test_delete_oversized_body_is_413(client):
+    rsvp_id, _ = create(client)
+    res = client.delete(
+        delete_url(rsvp_id),
+        data=json.dumps({"token": "a" * 2000}),
+        content_type="application/json",
+    )
+    assert res.status_code == 413
+    assert names(client) == ["Sam"]
+
+
+def test_tokens_are_unique_per_rsvp(client):
+    tokens = {create(client, name)[1] for name in ["Alice", "Bob", "Carol"]}
+    assert len(tokens) == 3
+
+
+def test_list_never_exposes_tokens(client):
+    create(client)
+    listed = client.get(URL).get_json()
+    assert listed["rsvps"] == [
+        {"display_name": "Sam", "created_at": listed["rsvps"][0]["created_at"]}
+    ]

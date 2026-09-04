@@ -87,10 +87,17 @@ CREATE TABLE IF NOT EXISTS rsvps (
   id           INTEGER PRIMARY KEY,
   event_id     TEXT    NOT NULL,
   display_name TEXT    NOT NULL,
-  created_at   TEXT    NOT NULL   -- ISO 8601 UTC, e.g. 2026-10-01T14:03:00Z
+  created_at   TEXT    NOT NULL,  -- ISO 8601 UTC, e.g. 2026-10-01T14:03:00Z
+  token        TEXT             -- secret returned once, on create; see DELETE
 );
 CREATE INDEX IF NOT EXISTS rsvps_event_id ON rsvps (event_id);
 ```
+
+`token` is a `secrets.token_urlsafe(24)` string, generated per row and returned
+only in the `201` that creates it. It is the whole delete credential: whoever
+holds it can remove that one RSVP, and nothing else. The app adds the column to
+an existing database on startup, so rows written before this change have a
+`NULL` token and can only be removed on the box.
 
 ## HTTP API
 
@@ -139,7 +146,10 @@ Validation of `display_name`, applied in this order:
 
 Other responses:
 
-- `201 {"event_id": "fri-dinner", "display_name": "Sam", "created_at": "..."}` on success.
+- `201 {"event_id": "fri-dinner", "rsvp_id": 12, "display_name": "Sam", "created_at": "...", "token": "..."}`
+  on success. `rsvp_id` and `token` are what the visitor's browser needs to
+  delete this RSVP later; the honeypot's fake success returns the same shape
+  with a throwaway token, so a bot cannot tell the two apart.
 - `404 unknown_event` when the id is not in events.json.
 - `400 invalid_json` when the body is not a JSON object.
 - `413` when the body exceeds 1 KiB (Flask `MAX_CONTENT_LENGTH = 1024`).
@@ -148,16 +158,44 @@ Other responses:
 - Any other path under `/api/` is a JSON `404 not_found` for GET and a JSON
   `405 method_not_allowed` for other methods.
 
+### `DELETE /api/events/<event_id>/rsvps/<rsvp_id>`
+
+Request body, `Content-Type: application/json`:
+
+```json
+{"token": "the token from the POST that created this RSVP"}
+```
+
+This is how a visitor takes their own name back off a list without an account
+or a password: the browser that created the RSVP kept the token, so it is the
+only one that can delete the row. Presenting no token, a token for another row,
+or a token for a row written before the column existed all fail the same way.
+
+- `200 {"event_id": "fri-dinner", "rsvp_id": 12, "display_name": "Sam", "deleted": true}` on success.
+- `404 unknown_event` when the id is not in events.json.
+- `404 not_found` when the event has no RSVP with that `rsvp_id`.
+- `403 invalid_token` when the row exists but the token does not match it
+  (including a row whose stored token is `NULL`). Compared with
+  `secrets.compare_digest`.
+- `400 invalid_json` when the body is not a JSON object with a string `token`.
+- `413` when the body exceeds 1 KiB.
+- `429` comes from nginx, as it does for `POST`.
+
+Deleting frees the name: the same name can be re-added afterwards, since the
+duplicate check in step 5 only looks at rows that are still there.
+
 ### Not in the API
 
-There is no `GET /api/events`; the frontend reads `static/events.json`. There
-is no delete; moderation is `sqlite3 /var/lib/come-see/rsvps.db` on the box.
+There is no `GET /api/events`; the frontend reads `static/events.json`. The
+delete above removes one RSVP for whoever holds its token and nothing else:
+moderation — removing a name you did not write — is still `sqlite3
+/var/lib/come-see/rsvps.db` on the box.
 
 ## nginx routing
 
 - `/` and everything not under `/api/` → static files from the static root, `try_files $uri $uri/ =404`.
 - `/api/` → `proxy_pass` to the gunicorn socket with the same headers as booking-demo.
-- `POST` on `/api/` → `limit_req` zone keyed by `$binary_remote_addr`, 10 requests per minute, burst 5, `nodelay`.
+- `POST` and `DELETE` on `/api/` → `limit_req` zone keyed by `$binary_remote_addr`, 10 requests per minute, burst 5, `nodelay`. `GET` is never limited.
 
 ## Frontend behaviours
 
@@ -167,10 +205,17 @@ is no delete; moderation is `sqlite3 /var/lib/come-see/rsvps.db` on the box.
   page" link to `url`, both `target="_blank" rel="noopener noreferrer"`. Only
   `http:` and `https:` hrefs are rendered; anything else is dropped.
 - Per card: fetch the RSVP list on load, show names and count, and a form with
-  one text input (`maxlength="40"`) plus the hidden `website` honeypot.
+  one text input (`maxlength="40"`) plus the hidden `website` honeypot. The
+  input starts empty on every card; a name typed or submitted on one card is
+  never copied into another card's form.
 - On submit: `POST` JSON, then re-fetch the list. Map `409 duplicate` to "that
   name is already on the list", `409 event_full` and `400` to the server's
   message, `429` to "slow down and try again in a minute".
+- On success, keep `{rsvp_id, token}` for that event in `localStorage`. While
+  that entry exists the card offers "Take my name off"; pressing it sends the
+  `DELETE` above, drops the stored entry, and re-fetches the list. A `404` also
+  drops the entry — the row is gone either way. Clearing site data or moving to
+  another browser loses the token, and with it the button.
 - "Add to calendar" per card offers two things, both generated client-side:
   a downloaded `.ics` file (UTC `DTSTART`/`DTEND`, `UID` = `<id>@come-see.ethancloin.xyz`)
   and a Google Calendar template link

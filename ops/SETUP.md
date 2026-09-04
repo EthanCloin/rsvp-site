@@ -288,7 +288,14 @@ an event does not remove its RSVP rows; they just stop being reachable.
 
 ## Moderation
 
-There is no delete in the API. Use sqlite3 on the box:
+Visitors can take their own name off a list from the browser they RSVP'd with:
+the `POST` hands that browser a secret `token`, and a `DELETE` carrying it
+removes that one row. Nobody can remove a name they did not write, and a visitor
+who cleared their site data or switched devices has lost the token and will ask
+you instead.
+
+So removing someone else's name — or a name whose owner lost their token — is
+still sqlite3 on the box:
 
 ```sh
 sudo -iu deploy sqlite3 /var/lib/come-see/rsvps.db
@@ -306,6 +313,11 @@ DELETE FROM rsvps WHERE event_id = 'sun-dinner' AND display_name = 'Sam';
 
 Deletes are live immediately; no restart. Run `ops/backup.sh` first if you are
 about to delete a lot.
+
+Rows written before the `token` column existed (anything from the first deploy)
+have `token = NULL` and can only be removed here — the API refuses them with
+`403 invalid_token`. The column is added by the app at startup; a deploy is all
+it takes, and no row is rewritten.
 
 ## Restoring a backup
 

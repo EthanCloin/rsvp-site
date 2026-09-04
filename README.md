@@ -1,8 +1,10 @@
 # come-see
 
 A public RSVP page for a week of hometown events. Friends pick a display name,
-see who else is coming, and add an event to their calendar. No accounts, no
-event creation UI, no private data.
+see who else is coming, and add an event to their calendar. They can take their
+name back off from the same browser, no password: the RSVP hands that browser a
+secret token, and only that token deletes that row. No accounts, no event
+creation UI, no private data.
 
 Live at <https://come-see.ethancloin.xyz> (once deployed).
 
@@ -11,7 +13,7 @@ Live at <https://come-see.ethancloin.xyz> (once deployed).
 | Path | What it is |
 | --- | --- |
 | `static/` | The whole frontend. nginx serves this directory directly. `events.json` is the event list. |
-| `src/app/` | Flask app: two JSON endpoints over one SQLite table. |
+| `src/app/` | Flask app: a handful of JSON endpoints over one SQLite table. |
 | `src/gunicorn_config.py` | Binds gunicorn to the Unix socket systemd creates. |
 | `tests/` | pytest suite for the API. |
 | `ops/` | nginx site file, systemd unit, deploy and backup scripts, and the VPS runbook. |

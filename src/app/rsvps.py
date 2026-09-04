@@ -1,4 +1,5 @@
 import json
+import secrets
 import unicodedata
 
 from flask import Blueprint, current_app, jsonify, request
@@ -22,6 +23,9 @@ _ASCII_WS = set(" \t\n\r\f\v")
 # emoji sequences like a family or a flag keep working.
 _REJECTED_CATEGORIES = {"Cc", "Cf", "Cs", "Co", "Cn"}
 _ALLOWED_FORMAT_CHARS = {"\u200d"}  # zero width joiner
+
+
+TOKEN_BYTES = 24  # secrets.token_urlsafe(24) -> 32 url-safe characters
 
 
 def error(status, code, message):
@@ -59,18 +63,8 @@ def create_rsvp(event_id):
     if event_id not in events.known_event_ids():
         return unknown_event(event_id)
 
-    # reading the body is what enforces MAX_CONTENT_LENGTH (413), whatever the
-    # content type. Parsed by hand rather than get_json(): deeply nested junk
-    # like 1000 "[" raises RecursionError, which get_json(silent=True) does
-    # not swallow.
-    raw = request.get_data()
-    body = None
-    if request.is_json:
-        try:
-            body = json.loads(raw)
-        except (ValueError, RecursionError):
-            body = None
-    if not isinstance(body, dict):
+    body = read_json_object()
+    if body is None:
         return error(400, "invalid_json", "The request body must be a JSON object.")
 
     name = body.get("display_name")
@@ -79,7 +73,18 @@ def create_rsvp(event_id):
     website = body.get("website")
     if website is not None and website != "":
         echoed = normalise_name(name) if isinstance(name, str) else ""
-        return jsonify(event_id=event_id, display_name=echoed, created_at=utcnow_iso()), 201
+        # Same shape as a real 201, throwaway token: a bot cannot tell it stored
+        # nothing. The id is 0, which no row ever has (INTEGER PRIMARY KEY starts at 1).
+        return (
+            jsonify(
+                event_id=event_id,
+                rsvp_id=0,
+                display_name=echoed,
+                created_at=utcnow_iso(),
+                token=secrets.token_urlsafe(TOKEN_BYTES),
+            ),
+            201,
+        )
 
     # 1. must be a string
     if not isinstance(name, str):
@@ -120,13 +125,85 @@ def create_rsvp(event_id):
         return error(409, "event_full", "This list is full.")
 
     created_at = utcnow_iso()
-    db.execute(
-        "INSERT INTO rsvps (event_id, display_name, created_at) VALUES (?, ?, ?)",
-        (event_id, name, created_at),
+    # The token goes back to this browser once and is never listed again. It is
+    # the only thing that lets a visitor delete their own name later.
+    token = secrets.token_urlsafe(TOKEN_BYTES)
+    cur = db.execute(
+        "INSERT INTO rsvps (event_id, display_name, created_at, token) VALUES (?, ?, ?, ?)",
+        (event_id, name, created_at, token),
     )
+    rsvp_id = cur.lastrowid
     db.commit()
 
-    return jsonify(event_id=event_id, display_name=name, created_at=created_at), 201
+    return (
+        jsonify(
+            event_id=event_id,
+            rsvp_id=rsvp_id,
+            display_name=name,
+            created_at=created_at,
+            token=token,
+        ),
+        201,
+    )
+
+
+@bp.delete("/events/<event_id>/rsvps/<int:rsvp_id>")
+def delete_rsvp(event_id, rsvp_id):
+    """
+    Remove one RSVP for whoever holds its token. This is the whole "I changed my
+    mind" story: no account, no password, just the secret the browser kept from
+    the POST. Removing someone else's name is still a job for sqlite3 on the box.
+    """
+    if event_id not in events.known_event_ids():
+        return unknown_event(event_id)
+
+    body = read_json_object()
+    if body is None:
+        return error(400, "invalid_json", "The request body must be a JSON object.")
+    token = body.get("token")
+    if not isinstance(token, str) or not token:
+        return error(400, "invalid_json", "A token is required.")
+
+    db = get_db()
+    db.execute("BEGIN IMMEDIATE")
+    row = db.execute(
+        "SELECT display_name, token FROM rsvps WHERE id = ? AND event_id = ?",
+        (rsvp_id, event_id),
+    ).fetchone()
+    if row is None:
+        db.rollback()
+        return error(404, "not_found", "That RSVP is not on this list.")
+
+    # compare_digest on a fixed-length stand-in when the row predates tokens, so
+    # a NULL token takes the same path (and the same time) as a wrong one.
+    stored = row["token"] or ""
+    if not secrets.compare_digest(stored, token):
+        db.rollback()
+        return error(403, "invalid_token", "That RSVP belongs to someone else.")
+
+    db.execute("DELETE FROM rsvps WHERE id = ?", (rsvp_id,))
+    db.commit()
+    return jsonify(
+        event_id=event_id, rsvp_id=rsvp_id, display_name=row["display_name"], deleted=True
+    )
+
+
+def read_json_object():
+    """
+    The request body as a dict, or None if it is not a JSON object.
+
+    Reading the body is what enforces MAX_CONTENT_LENGTH (413), whatever the
+    content type. Parsed by hand rather than get_json(): deeply nested junk like
+    1000 "[" raises RecursionError, which get_json(silent=True) does not swallow.
+    """
+    raw = request.get_data()
+    if not request.is_json:
+        return None
+    try:
+        body = json.loads(raw)
+    except (ValueError, RecursionError):
+        return None
+    return body if isinstance(body, dict) else None
 
 
 def _is_whitespace(c):

@@ -6,6 +6,7 @@
 
   var STORAGE_KEY = 'come-see:name';
   var OPEN_KEY_PREFIX = 'come-see:open:';
+  var MINE_KEY_PREFIX = 'come-see:mine:';
   var UID_DOMAIN = 'come-see.ethancloin.xyz';
   var TWO_HOURS_MS = 2 * 60 * 60 * 1000;
   var MAX_STRIP_DAYS = 14;   // beyond this the strip stops being readable, so it hides
@@ -69,6 +70,28 @@
   function saveName(name) {
     try { localStorage.setItem(STORAGE_KEY, name); } catch (e) { /* private mode etc. */ }
   }
+  // The RSVPs made from this browser: event id -> {id, token, name}. The token
+  // comes back once, from the POST that created the row, and is the only thing
+  // that lets us delete it again. Losing it (cleared storage, another browser)
+  // costs nothing but the ability to self-remove.
+  function loadMine(id) {
+    try {
+      var raw = localStorage.getItem(MINE_KEY_PREFIX + id);
+      var rec = raw ? JSON.parse(raw) : null;
+      if (!rec || typeof rec.token !== 'string' || typeof rec.name !== 'string') return null;
+      if (typeof rec.id !== 'number') return null;
+      return rec;
+    } catch (e) {
+      return null;
+    }
+  }
+  function saveMine(id, rec) {
+    try { localStorage.setItem(MINE_KEY_PREFIX + id, JSON.stringify(rec)); } catch (e) { /* private mode etc. */ }
+  }
+  function clearMine(id) {
+    try { localStorage.removeItem(MINE_KEY_PREFIX + id); } catch (e) { /* ignore */ }
+  }
+
   // Open/closed choice per card, so a re-render after submitting does not snap it shut.
   function loadOpen(id) {
     try { return sessionStorage.getItem(OPEN_KEY_PREFIX + id) === '1'; } catch (e) { return false; }
@@ -255,6 +278,14 @@
     });
   }
 
+  function deleteRsvp(id, mine) {
+    return fetch(rsvpUrl(id) + '/' + encodeURIComponent(mine.id), {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ token: mine.token })
+    });
+  }
+
   function errorMessageFor(res) {
     if (res.status === 429) return Promise.resolve("Slow down and try again in a minute");
     if (res.status === 409 || res.status === 400) {
@@ -281,6 +312,7 @@
 
   function renderList(card, names) {
     card.names = names;
+    card.loaded = true;
     card.listEl.textContent = '';
     names.forEach(function (n) {
       var li = el('li', { text: n });
@@ -305,10 +337,19 @@
   }
 
   function updateYouState(card) {
-    var going = !!state.name && card.names.some(function (n) { return sameName(n, state.name); });
+    var mine = loadMine(card.event.id);
+    // The row can go away without us: removed on the box, or a restored backup.
+    // Once the list says so, the token is dead weight - drop it.
+    if (mine && card.loaded && !card.names.some(function (n) { return sameName(n, mine.name); })) {
+      clearMine(card.event.id);
+      mine = null;
+    }
+    var going = !!mine || (!!state.name && card.names.some(function (n) { return sameName(n, state.name); }));
     card.youEl.hidden = !going;
     card.form.hidden = going;
-    if (!going && !card.input.value) card.input.value = state.name;
+    // Only an RSVP this browser made can be taken back: that is the one we hold
+    // a token for. Someone else's matching name is not ours to remove.
+    card.removeBtn.hidden = !mine;
   }
 
   function refreshList(card) {
@@ -338,17 +379,22 @@
     postRsvp(card.event.id, name, card.hp.value || '')
       .then(function (res) {
         if (res.ok) {
-          var previous = state.name;
           state.name = name;
           saveName(name);
           card.input.value = name;
-          // Prefill the other untouched forms with the new name.
-          Object.keys(cards).forEach(function (id) {
-            var c = cards[id];
-            if (c !== card && (!c.input.value || sameName(c.input.value, previous))) c.input.value = name;
-            if (c !== card) updateYouState(c);
-          });
-          return refreshList(card);
+          // Keep the delete token for this event. Each card is typed into on its
+          // own; a name entered here is never copied into another card's form.
+          return res.json().then(function (body) {
+            if (body && typeof body.token === 'string' && typeof body.rsvp_id === 'number') {
+              saveMine(card.event.id, { id: body.rsvp_id, token: body.token, name: name });
+            }
+          }, function () { /* stored anyway; we just cannot delete it from here */ })
+            .then(function () {
+              Object.keys(cards).forEach(function (id) {
+                if (cards[id] !== card) updateYouState(cards[id]);
+              });
+              return refreshList(card);
+            });
         }
         return errorMessageFor(res).then(function (msg) {
           setError(card, msg);
@@ -360,6 +406,33 @@
       })
       .then(function () {
         card.button.disabled = false;
+      });
+  }
+
+  function onRemove(card) {
+    var mine = loadMine(card.event.id);
+    if (!mine) { updateYouState(card); return; }
+    setError(card, '');
+    card.removeBtn.disabled = true;
+
+    deleteRsvp(card.event.id, mine)
+      .then(function (res) {
+        // 404 means it is already gone, which is what was wanted. 403 means this
+        // token no longer opens that row, so keeping it only shows a dead button.
+        if (res.ok || res.status === 404 || res.status === 403) {
+          clearMine(card.event.id);
+          if (res.status === 403) setError(card, "That name can't be removed from this browser. Ask the host to take it off.");
+          // Leave the name in this card's own box, so changing their mind back is one tap.
+          card.input.value = mine.name;
+          return refreshList(card);
+        }
+        return errorMessageFor(res).then(function (msg) { setError(card, msg); });
+      })
+      .catch(function () {
+        setError(card, GENERIC_ERROR);
+      })
+      .then(function () {
+        card.removeBtn.disabled = false;
       });
   }
 
@@ -395,7 +468,7 @@
 
   function buildCard(ev, range) {
     var id = ev.id;
-    var card = { event: ev, range: range, names: [], open: loadOpen(id) };
+    var card = { event: ev, range: range, names: [], loaded: false, open: loadOpen(id) };
     cards[id] = card;
 
     var titleId = 'event-' + id + '-title';
@@ -410,10 +483,7 @@
         alt: typeof ev.image_alt === 'string' ? ev.image_alt : '',
         decoding: 'async'
       });
-      photo = el('figure', { class: 'event-photo' }, [
-        img,
-        ev.image_credit ? el('figcaption', { class: 'photo-credit', text: ev.image_credit }) : null
-      ]);
+      photo = el('figure', { class: 'event-photo' }, [img]);
     }
 
     /* date tab */
@@ -462,7 +532,7 @@
 
     card.input = el('input', {
       type: 'text', id: inputId, name: 'display_name', maxlength: '40', required: '',
-      autocomplete: 'name', placeholder: 'Your name', 'aria-label': 'Your name', value: state.name
+      autocomplete: 'name', placeholder: 'Your name', 'aria-label': 'Your name'
     });
     card.hp = el('input', {
       type: 'text', name: 'website', class: 'hp', tabindex: '-1',
@@ -474,8 +544,14 @@
     card.form = el('form', { class: 'rsvp-form', novalidate: '' }, [card.input, card.hp, card.button]);
     card.form.addEventListener('submit', function (e) { onSubmit(card, e); });
 
+    card.removeBtn = el('button', {
+      type: 'button', class: 'remove-btn', hidden: '', text: 'Take my name off',
+      'aria-label': 'Take my name off ' + (ev.title || id)
+    });
+    card.removeBtn.addEventListener('click', function () { onRemove(card); });
+
     card.youEl = el('p', { class: 'you-going', hidden: '' }, [
-      icon(16, ICON_CHECK), document.createTextNode("You're going")
+      icon(16, ICON_CHECK), document.createTextNode("You're going"), card.removeBtn
     ]);
 
     var rsvps = el('section', { class: 'rsvps', 'aria-label': 'RSVPs' }, [

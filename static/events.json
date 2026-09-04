@@ -30,6 +30,18 @@
       "image_credit": "Map data (c) OpenStreetMap contributors"
     },
     {
+      "id": "king-street-bar-crawl",
+      "title": "King Street Bar Crawl",
+      "start": "2026-09-18T20:00:00-04:00",
+      "end": "2026-09-19T01:00:00-04:00",
+      "location": "Rogue, King Street, Jacksonville",
+      "address": "927 King St, Jacksonville, FL 32204",
+      "description": "Join me starting at Rogue for a chill evening of alcohol abuse and catching up with lovely friends. Throw a ring, down a shot, and follow along to wherever the night takes us.",
+      "image": "img/king-street-bar-crawl.png",
+      "image_alt": "Map of King Street in Murray Hill, Jacksonville, marking Rogue bar",
+      "image_credit": "Map data (c) OpenStreetMap contributors"
+    },
+    {
       "id": "bonnie-x-clyde",
       "title": "Bonnie x Clyde at Decca Live",
       "start": "2026-09-19T22:00:00-04:00",

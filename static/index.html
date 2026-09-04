@@ -3,19 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
+  <meta name="color-scheme" content="light">
   <title>Come see</title>
+  <link rel="preload" href="fonts/mulish-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/domine-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="page-header">
+    <p class="kicker">Come see</p>
     <h1 id="page-title">Come see</h1>
     <p id="page-intro" class="intro"></p>
   </header>
 
+  <nav id="day-strip" class="day-strip" aria-label="Days of the stay" hidden></nav>
+
   <main id="main">
     <p id="status" class="status" aria-live="polite">Loading events…</p>
-    <div id="events"></div>
+    <div id="events" class="events"></div>
   </main>
 
   <footer class="page-footer">

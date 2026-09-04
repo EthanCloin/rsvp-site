@@ -1,191 +1,458 @@
-/* Come see — warm, minimal, mobile first. No external assets. */
+/* Come see — parchment + fern + sienna. Light only. No external requests:
+   Domine and Mulish are self-hosted in fonts/ (see fonts/README.md).
+   Values come from design/HANDOFF.md and the Main/Mobile artboards beside it.
+   Mobile first: the base rules are the phone sizes, 640px up is the desktop set. */
 
-:root {
-  color-scheme: light dark;
+/* ---------- fonts ---------- */
 
-  --bg: #fbf7f1;
-  --surface: #ffffff;
-  --text: #2b2420;
-  --muted: #6f655d;
-  --line: #e6ddd2;
-  --accent: #b4552a;
-  --accent-ink: #ffffff;
-  --accent-soft: #f6e6dc;
-  --ok: #2e7d4f;
-  --ok-soft: #e3f2e8;
-  --error: #b3261e;
-  --error-soft: #fbe9e7;
-  --focus: #b4552a;
-  --shadow: 0 1px 2px rgba(43, 36, 32, 0.06), 0 4px 14px rgba(43, 36, 32, 0.05);
-  --radius: 14px;
+@font-face {
+  font-family: Domine;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/domine-700-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: Domine;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/domine-700-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* Mulish ships as one variable file per subset; 400, 700 and 800 all come from it. */
+@font-face {
+  font-family: Mulish;
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(fonts/mulish-var-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: Mulish;
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(fonts/mulish-var-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1b1815;
-    --surface: #26221e;
-    --text: #f1eae2;
-    --muted: #b1a699;
-    --line: #3a332d;
-    --accent: #e2864f;
-    --accent-ink: #1b1815;
-    --accent-soft: #3b2a20;
-    --ok: #7dd39f;
-    --ok-soft: #223a2c;
-    --error: #ff8a80;
-    --error-soft: #3d2320;
-    --focus: #e2864f;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.25);
-  }
+/* ---------- tokens ---------- */
+
+:root {
+  color-scheme: light;
+
+  --bg: #efefe7;          /* parchment-light: page and card */
+  --bg-2: #deddce;        /* parchment: photo placeholder, attendee pills */
+  --surface: #fafaf5;     /* text input */
+  --text: #22321e;        /* sage-900 */
+  --muted: #44553f;       /* sage-800 */
+  --green: #547543;       /* fern-800 */
+  --green-line: #5e864b;  /* fern-700, underline on green links */
+  --faint: #a2b59b;       /* sage-500, decorative only — fails AA */
+  --rule: #c14e36;        /* sienna-700, header rule */
+  --accent: #b34830;      /* sienna-800 */
+  --accent-line: #d2573b; /* sienna-600, underline on Tickets */
+  --button-ink: #efefe7;
+  --shadow: 0 1px 2px rgba(34, 50, 30, 0.08), 0 6px 18px rgba(34, 50, 30, 0.1);
+  --shadow-tab: 0 1px 2px rgba(34, 50, 30, 0.08), 0 4px 12px rgba(34, 50, 30, 0.1);
+  --radius: 6px;
+  --focus: #b34830;
+
+  --serif: Domine, Georgia, "Times New Roman", serif;
+  --sans: Mulish, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Values the phone/desktop split changes. Base = phone. */
+  --pad-block: 24px;
+  --pad-inline: 16px;
+  --pad-bottom: 48px;
+  --card-pad-inline: 16px;
+  --card-pad-bottom: 18px;
+  --photo-h: 180px;
+  --tab-w: 72px;
+  --tab-pad: 8px 0 9px;
+  --tab-num: 36px;
+  --date-row-pull: -32px;
+  --title-size: 22px;
+  --title-gap: 8px;
+  --desc-gap: 4px;
+  --actions-gap: 14px;
+  --grid-gap: 22px;
+  --strip-gap: 24px;
+  --strip-pad-inline: 0px;
+  --strip-cell-pad: 5px;
+  --strip-cell-gap: 3px;
+  --strip-dow: 10px;
+  --strip-dow-track: 0.1em;
+  --strip-num: 16px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* The hidden attribute must win over any display rule below (e.g. .you-going). */
+/* Must win over any display rule below (e.g. .you-going, .rsvp-list). */
 [hidden] { display: none !important; }
 
 html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  padding: 1.25rem 1rem 3rem;
+  padding: var(--pad-block) var(--pad-inline) var(--pad-bottom);
+  max-width: 1100px;
+  margin-inline: auto;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1.0625rem;
+  font-family: var(--sans);
+  font-size: 17px;
   line-height: 1.5;
-  max-width: 44rem;
-  margin-inline: auto;
 }
 
-/* Header */
-.page-header { margin: 0.5rem 0 1.5rem; }
-h1 {
-  font-size: clamp(1.75rem, 6vw, 2.5rem);
-  line-height: 1.15;
-  margin: 0 0 0.5rem;
-  letter-spacing: -0.01em;
+/* Screen-reader-only text (the full date behind the abbreviated tab). */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
-.intro { margin: 0; color: var(--muted); font-size: 1.0625rem; }
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- header ---------- */
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 0 20px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--rule);
+}
+.kicker {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+h1 {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 6vw, 2.875rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--green);
+}
+.intro {
+  margin: 0;
+  max-width: 56ch;
+  font-size: 16px;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* ---------- day strip ---------- */
+
+.day-strip {
+  display: grid;
+  grid-template-columns: repeat(var(--days, 7), minmax(0, 1fr));
+  margin: 0 0 var(--strip-gap);
+  padding-inline: var(--strip-pad-inline);
+}
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--strip-cell-gap);
+  padding-top: var(--strip-cell-pad);
+  border-top: 1px solid var(--faint);
+}
+.day-cell.has-event { border-top: 3px solid var(--green); }
+.day-dow {
+  font-size: var(--strip-dow);
+  font-weight: 800;
+  letter-spacing: var(--strip-dow-track);
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.day-num {
+  font-family: var(--serif);
+  font-size: var(--strip-num);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--faint);
+}
+.day-cell.has-event .day-dow,
+.day-cell.has-event .day-num { color: var(--green); }
+.day-cell.has-event .day-num { font-weight: 700; }
+
+/* Too many days, or too little room, for a readable weekday label. */
+.day-strip.is-dense .day-dow { display: none; }
+@media (max-width: 359px) { .day-dow { display: none; } }
+
+/* ---------- status line ---------- */
 
 .status { color: var(--muted); }
-.status.error { color: var(--error); }
+.status.error { color: var(--accent); }
 
-/* Day groups */
-.day { margin: 2rem 0 1rem; }
-.day-heading {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: none;
-  letter-spacing: 0.01em;
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--line);
+/* ---------- cards grid ---------- */
+
+.events {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--grid-gap);
+  align-items: stretch;
 }
 
-/* Event card */
 .event {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--green);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1.1rem 1.1rem 1rem;
-  margin: 0 0 1rem;
-}
-.event-title { font-size: 1.35rem; line-height: 1.25; margin: 0 0 0.35rem; }
-.event-meta { margin: 0; color: var(--muted); }
-.event-meta + .event-meta { margin-top: 0.1rem; }
-.event-time { font-weight: 600; color: var(--text); }
-.event-desc { margin: 0.75rem 0 0; }
-
-/* Official event page / ticket links */
-.event-links { margin: 0.75rem 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.95rem; }
-.event-links a { color: var(--accent); text-decoration: none; font-weight: 600; }
-.event-links a:hover { text-decoration: underline; }
-.event-links .ticket-link {
-  background: var(--accent-soft);
-  border-radius: 999px;
-  padding: 0.2rem 0.75rem;
+  /* No overflow: hidden — the date tab's shadow has to paint outside the photo. */
 }
 
-/* RSVP list */
-.rsvps { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px dashed var(--line); }
-.rsvp-count { margin: 0 0 0.4rem; font-weight: 600; }
-.rsvp-list {
-  list-style: none;
+/* ---------- photo ---------- */
+
+.event-photo {
+  position: relative;
   margin: 0;
+  flex: 0 0 auto;
+}
+.event-photo img {
+  display: block;
+  width: 100%;
+  height: var(--photo-h);
+  object-fit: cover;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--green);
+  border-radius: 5px 5px 0 0;
+}
+/* Attribution rides on the photo's top-right so the date tab's overlap is untouched. */
+.photo-credit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  max-width: calc(100% - 12px);
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(34, 50, 30, 0.62);
+  color: #efefe7;
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+/* ---------- card body ---------- */
+
+.event-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 auto;
+  padding: 0 var(--card-pad-inline) var(--card-pad-bottom);
+}
+/* No photo: nothing to overlap, so the body opens with normal padding. */
+.event.no-photo .event-body { padding-top: 20px; }
+.event.no-photo .date-row { margin-top: 0; }
+
+.date-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: var(--date-row-pull);
+}
+.date-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  width: var(--tab-w);
+  padding: var(--tab-pad);
+  line-height: 1;
+  background: var(--bg);
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-tab);
+}
+.tab-dow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.tab-num {
+  margin-top: 4px;
+  font-family: var(--serif);
+  font-size: var(--tab-num);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--green);
+}
+.tab-mon {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.next-kicker {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.event-title {
+  margin: var(--title-gap) 0 0;
+  font-family: var(--serif);
+  font-size: var(--title-size);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--green);
+}
+.event-meta {
+  margin: 0;
+  font-size: 15.2px;
+  color: var(--muted);
+}
+.event-time { font-weight: 700; color: var(--text); }
+/* Phone puts time and place on one line; the desktop rule swaps in the <br>. */
+.event-meta br { display: none; }
+.event-where::before { content: " · "; }
+
+.event-desc {
+  margin: var(--desc-gap) 0 0;
+  font-size: 15.2px;
+  color: var(--text);
+  text-wrap: pretty;
+}
+
+/* ---------- next up / past ---------- */
+
+.event.is-next .date-tab { border-color: var(--accent); }
+.event.is-next .tab-dow,
+.event.is-next .tab-num { color: var(--accent); }
+
+.event.is-past { opacity: 0.55; }
+.event.is-past .tab-dow,
+.event.is-past .tab-num { color: var(--muted); }
+
+/* ---------- RSVP block ---------- */
+
+.rsvps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--faint);
+}
+.rsvp-toggle {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  min-height: 32px;
   padding: 0;
+  font: inherit;
+  font-size: 15.2px;
+  font-weight: 700;
+  color: var(--green);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+/* Same slot, no toggle: an empty list or a list that would not load. */
+.rsvp-count {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  min-height: 32px;
+  font-size: 15.2px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.rsvp-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .rsvp-list li {
-  background: var(--accent-soft);
-  color: var(--text);
+  padding: 3px 11px;
   border-radius: 999px;
-  padding: 0.2rem 0.7rem;
-  font-size: 0.95rem;
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 14.4px;
   overflow-wrap: anywhere;
 }
-.rsvp-list li.is-you { outline: 2px solid var(--accent); outline-offset: -2px; }
-.rsvp-list:empty { display: none; }
+.rsvp-list li.is-you { outline: 2px solid var(--green); outline-offset: -2px; }
 
-/* Form */
-.rsvp-form { margin-top: 0.9rem; }
-.rsvp-form label {
-  display: block;
-  font-size: 0.95rem;
-  color: var(--muted);
-  margin-bottom: 0.3rem;
-}
-.rsvp-row { display: flex; gap: 0.5rem; }
+.rsvp-form { display: flex; gap: 8px; }
 .rsvp-form input[type="text"] {
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
   font: inherit;
+  font-size: 16px; /* 16px so iOS does not zoom the page on focus */
   color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.6rem 0.75rem;
-}
-.rsvp-form input[type="text"]:focus-visible,
-.rsvp-form button:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  background: var(--surface);
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
 }
 .rsvp-form button {
   flex: 0 0 auto;
-  font: inherit;
-  font-weight: 600;
-  color: var(--accent-ink);
-  background: var(--accent);
-  border: 0;
-  border-radius: 10px;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
   min-height: 44px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 15.2px;
+  font-weight: 700;
+  color: var(--green);
+  background: transparent;
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  cursor: pointer;
 }
+.rsvp-form button:hover { background: var(--bg-2); }
 .rsvp-form button:disabled { opacity: 0.6; cursor: progress; }
 
+.you-going {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  min-height: 32px;
+  font-size: 15.2px;
+  font-weight: 700;
+  color: var(--green);
+}
+
 .form-error {
-  margin: 0.5rem 0 0;
-  color: var(--error);
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 15.2px;
+  color: var(--accent);
 }
 .form-error:empty { display: none; }
-
-.you-going {
-  margin: 0.9rem 0 0;
-  display: inline-block;
-  color: var(--ok);
-  background: var(--ok-soft);
-  border-radius: 999px;
-  padding: 0.3rem 0.8rem;
-  font-weight: 600;
-}
 
 /* Honeypot: offscreen, never display:none. */
 .hp {
@@ -198,20 +465,111 @@ a:focus-visible {
   opacity: 0;
 }
 
-/* Calendar actions */
-.calendar { margin: 0.9rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.95rem; }
-.calendar a { color: var(--accent); text-decoration: none; font-weight: 600; }
-.calendar a:hover { text-decoration: underline; }
+/* ---------- actions ---------- */
 
-/* Footer */
-.page-footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.9rem; }
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: var(--actions-gap);
+}
+.ics-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius);
+  background: var(--green);
+  color: var(--button-ink);
+  font-weight: 700;
+  font-size: 15.2px;
+  text-decoration: none;
+}
+.ics-link:hover { background: #44553f; }
+.ics-link:active { background: #22321e; }
+
+.event-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+.event-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-weight: 700;
+  font-size: 15.2px;
+  color: var(--green);
+  text-decoration: none;
+}
+.event-links a span {
+  border-bottom: 1px solid var(--green-line);
+  padding-bottom: 1px;
+}
+/* Hover thickens the rule; the colour stays put because lighter greens fail AA. */
+.event-links a:hover span { border-bottom-width: 2px; }
+.event-links a.ticket-link { color: var(--accent); }
+.event-links a.ticket-link span { border-bottom-color: var(--accent-line); }
+
+/* ---------- footer ---------- */
+
+.page-footer {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 14.4px;
+  color: var(--muted);
+}
 .tz-note { margin: 0; }
 
+/* ---------- desktop ---------- */
+
 @media (min-width: 640px) {
-  body { padding: 2.5rem 1.5rem 4rem; }
-  .event { padding: 1.4rem 1.5rem 1.25rem; }
+  :root {
+    --pad-block: 48px;
+    --pad-inline: 40px;
+    --pad-bottom: 64px;
+    --card-pad-inline: 20px;
+    --card-pad-bottom: 20px;
+    --photo-h: 210px;
+    --tab-w: 78px;
+    --tab-pad: 9px 0 10px;
+    --tab-num: 40px;
+    --date-row-pull: -34px;
+    --title-size: 24px;
+    --title-gap: 10px;
+    --desc-gap: 6px;
+    --actions-gap: 18px;
+    --grid-gap: 28px;
+    --strip-gap: 36px;
+    --strip-pad-inline: 12px;
+    --strip-cell-pad: 6px;
+    --strip-cell-gap: 4px;
+    --strip-dow: 11px;
+    --strip-dow-track: 0.14em;
+    --strip-num: 20px;
+  }
+
+  .page-header { margin-bottom: 28px; padding-bottom: 22px; }
+  .kicker { font-size: 13px; }
+  .intro { font-size: 17px; }
+
+  .events { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .event-meta br { display: inline; }
+  .event-where::before { content: none; }
+
+  .page-footer { margin-top: 40px; }
+}
+
+@media (min-width: 960px) {
+  .events { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .rsvp-form button { transition: opacity 120ms ease; }
+  .ics-link { transition: background-color 120ms ease; }
 }

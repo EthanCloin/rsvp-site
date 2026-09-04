@@ -1,6 +1,6 @@
 {
-  "title": "Ethan's week home",
-  "intro": "I'm in town for a stretch in September. Here's where I'll be. Add your name to anything you want to come to.",
+  "title": "Ethan's Jax Visit",
+  "intro": "I'm in town this week! Catch me at one of these public events or set some time up with me on the side ;)",
   "events": [
     {
       "id": "fin-fest",
@@ -19,12 +19,12 @@
     {
       "id": "riverside-flow",
       "title": "Riverside Flow meetup",
-      "start": "2026-09-15T20:00:00-04:00",
-      "end": "2026-09-15T22:00:00-04:00",
+      "start": "2026-09-15T19:00:00-04:00",
+      "end": "2026-09-15T23:00:00-04:00",
       "location": "Riverside Arts Market",
       "address": "715 Riverside Ave, Jacksonville, FL 32204",
       "description": "Flow arts meetup under the Fuller Warren Bridge. Bring a prop and play, learn something new, or just come sit by the river and watch. Free, no ticket.",
-      "url": "https://www.facebook.com/RiversidePoiDM/",
+      "url": "https://www.instagram.com/904flowmies",
       "image": "img/riverside-flow.png",
       "image_alt": "Map of Riverside Arts Market under the Fuller Warren Bridge on the St. Johns River",
       "image_credit": "Map data (c) OpenStreetMap contributors"

@@ -1,0 +1,340 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" />
+  <style>
+    body { margin: 0; }
+    a { color: #B34830; } a:hover { color: #8A3624; }
+  </style>
+</helmet>
+
+<div style="background: #EFEFE7; color: #23281E; font-family: Mulish, system-ui, -apple-system, 'Segoe UI', sans-serif; padding: 44px 48px 56px; min-height: 100%; box-sizing: border-box;">
+
+  <header style="margin: 0 0 40px;">
+    <h1 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 34px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 8px;">Palette &amp; type</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #636B59; max-width: 62ch;">Lifted from ethancloin.xyz, then adjusted only where a value failed contrast at body size. Ratios below are against the surface the value actually sits on.</p>
+  </header>
+
+  <section style="margin: 0 0 44px;">
+    <h2 style="font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #636B59; margin: 0 0 6px;">From the site</h2>
+    <p style="margin: 0 0 18px; font-size: 15.2px; line-height: 1.5; color: #636B59;">Tailwind tokens as they resolve today. Unchanged.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #EFEFE7; border: 1px solid #D4D3C0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">parchment-light</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#EFEFE7</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #DEDDCE; border: 1px solid #D4D3C0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">parchment</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#DEDDCE</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #E05F3D;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">sienna-500</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#E05F3D &middot; 3.09</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #D2573B;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">sienna-600</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#D2573B &middot; 3.52</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #C14E36;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">sienna-700</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#C14E36 &middot; 4.12</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 2px solid #B34830; border-radius: 12px; padding: 11px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #B34830;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">sienna-800</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#B34830 &middot; 4.68 AA</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #75A65E;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">fern-500</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#75A65E</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #5E864B;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">fern-700</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#5E864B &middot; 3.64</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 2px solid #547543; border-radius: 12px; padding: 11px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #547543;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">fern-800</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#547543 &middot; 4.54 AA</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section style="margin: 0 0 44px;">
+    <h2 style="font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #636B59; margin: 0 0 6px;">App tokens &mdash; light</h2>
+    <p style="margin: 0 0 18px; font-size: 15.2px; line-height: 1.5; color: #636B59;">The names already in <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; background: #E4E4DA; padding: 1px 5px; border-radius: 4px;">style.css</span>, repointed at the brand.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #EFEFE7; border: 1px solid #D4D3C0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--bg</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#EFEFE7</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #FAFAF5; border: 1px solid #D4D3C0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--surface</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#FAFAF5</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #D4D3C0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--line</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#D4D3C0</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #23281E;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--text</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#23281E &middot; 13.0</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #636B59;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--muted</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#636B59 &middot; 4.81</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #B34830;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--accent</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#B34830 &middot; 4.68</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #F2E3DC;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--accent-soft</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#F2E3DC</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #4C6B3C;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--ok</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#4C6B3C &middot; 5.21</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #EAF0E5;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--ok-soft</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#EAF0E5</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #8A1C11;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--error</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#8A1C11 &middot; 8.06</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #F6E4E0;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--error-soft</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#F6E4E0</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #FAFAF5; border: 3px solid #B34830;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3;">--focus</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #636B59; font-variant-numeric: tabular-nums;">#B34830</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section style="margin: 0 0 44px;">
+    <h2 style="font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #636B59; margin: 0 0 6px;">App tokens &mdash; dark</h2>
+    <p style="margin: 0 0 18px; font-size: 15.2px; line-height: 1.5; color: #636B59;">Invented &mdash; the site has no dark mode. Sienna lifts to a lighter step so links clear AA on the card.</p>
+    <div style="background: #1F211C; border-radius: 14px; padding: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #1F211C; border: 1px solid #464B3F;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--bg</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#1F211C</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #292C25; border: 1px solid #464B3F;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--surface</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#292C25</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #464B3F;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--line</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#464B3F</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #EFEFE7;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--text</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#EFEFE7 &middot; 12.3</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #A8AD9C;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--muted</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#A8AD9C &middot; 6.16</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #E77A57;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--accent</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#E77A57 &middot; 4.94</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #3A2820;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--accent-soft</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#3A2820</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #8FBF74;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--ok</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#8FBF74 &middot; 5.98</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; background: #292C25; border: 1px solid #464B3F; border-radius: 12px; padding: 12px;">
+        <div style="width: 46px; height: 46px; flex: 0 0 auto; border-radius: 8px; background: #2A3624;"></div>
+        <div style="min-width: 0;">
+          <div style="font-size: 14px; font-weight: 700; line-height: 1.3; color: #EFEFE7;">--ok-soft</div>
+          <div style="font-size: 13px; line-height: 1.4; color: #A8AD9C; font-variant-numeric: tabular-nums;">#2A3624</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 style="font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #636B59; margin: 0 0 6px;">Type</h2>
+    <p style="margin: 0 0 22px; font-size: 15.2px; line-height: 1.5; color: #636B59;">Domine for the two headline roles, Mulish for everything else &mdash; the same pairing the site loads.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 20px; background: #FAFAF5; border: 1px solid #D4D3C0; border-radius: 14px; padding: 26px 28px;">
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Domine 700 &middot; 40/1.15<br>page title</div>
+        <div style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 40px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; min-width: 0;">Ethan&rsquo;s week home</div>
+      </div>
+
+      <div style="height: 1px; background: #D4D3C0;"></div>
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Domine 600 &middot; 21.6/1.25<br>event title</div>
+        <div style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21.6px; font-weight: 600; line-height: 1.25; min-width: 0;">Coffee at the square</div>
+      </div>
+
+      <div style="height: 1px; background: #D4D3C0;"></div>
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Mulish 600 &middot; 18/1.5<br>day heading</div>
+        <div style="font-size: 18px; font-weight: 600; line-height: 1.5; color: #636B59; letter-spacing: 0.01em; min-width: 0;">Saturday, October 10</div>
+      </div>
+
+      <div style="height: 1px; background: #D4D3C0;"></div>
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Mulish 400 &middot; 17/1.5<br>body</div>
+        <div style="font-size: 17px; line-height: 1.5; min-width: 0; text-wrap: pretty;">I&rsquo;m in town for a week. Here&rsquo;s where I&rsquo;ll be. Add your name to anything you want to come to.</div>
+      </div>
+
+      <div style="height: 1px; background: #D4D3C0;"></div>
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Mulish 600 &middot; 15.2/1.5<br>pills, links, labels</div>
+        <div style="font-size: 15.2px; font-weight: 600; line-height: 1.5; min-width: 0;">Add to Google Calendar</div>
+      </div>
+
+      <div style="height: 1px; background: #D4D3C0;"></div>
+
+      <div style="display: flex; gap: 20px; align-items: baseline;">
+        <div style="flex: 0 0 132px; font-size: 12.5px; line-height: 1.4; color: #636B59;">Mulish 400 &middot; 14.4/1.5<br>footer</div>
+        <div style="font-size: 14.4px; line-height: 1.5; color: #636B59; min-width: 0;">Times are shown in your local time zone (EDT).</div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>

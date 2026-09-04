@@ -16,6 +16,7 @@ Live at <https://come-see.ethancloin.xyz> (once deployed).
 | `tests/` | pytest suite for the API. |
 | `ops/` | nginx site file, systemd unit, deploy and backup scripts, and the VPS runbook. |
 | `CONTRACT.md` | The API, data shapes, and server paths every part is built against. |
+| `design/` | The visual design: `HANDOFF.md` is the implementation spec, the `.dc.html` files are the artboards behind it. |
 
 ## Run locally
 

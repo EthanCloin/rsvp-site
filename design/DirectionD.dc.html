@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" />
+  <style>
+    body { margin: 0; }
+    a { color: #B34830; } a:hover { color: #63755E; }
+  </style>
+</helmet>
+
+<div style="background: #EFEFE7; color: #23281E; font-family: Mulish, system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.5; min-height: 100%; box-sizing: border-box;">
+<div style="max-width: 880px; margin: 0 auto; padding: 48px 40px 64px; box-sizing: border-box;">
+
+  <header style="margin: 0 0 32px;">
+    <p style="margin: 0 0 10px; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #547543;">Come see</p>
+    <h1 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 44px; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; margin: 0 0 10px;">Ethan&rsquo;s week home</h1>
+    <p style="margin: 0; color: #636B59; font-size: 17px; max-width: 56ch; text-wrap: pretty;">I&rsquo;m in town for a week. Here&rsquo;s where I&rsquo;ll be. Come to whatever you can.</p>
+  </header>
+
+  <!-- Hero: whichever event is next -->
+  <article style="display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 0; background: #FAFAF5; border: 1px solid #547543; border-radius: 8px; box-shadow: 0 1px 2px rgba(35,40,30,0.05), 0 4px 14px rgba(35,40,30,0.045); overflow: hidden;">
+    <div style="background: #DEDDCE; border-right: 1px solid #547543; display: flex; align-items: center; justify-content: center; color: #63755E; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; min-height: 280px;">photo</div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 26px 28px 28px; min-width: 0;">
+      <p style="margin: 0; font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #B34830;">Next up &middot; Saturday, in 5 days</p>
+      <h2 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 34px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin: 0;">Coffee at the square</h2>
+      <p style="margin: 0; color: #636B59;"><span style="font-weight: 700; color: #23281E;">Sat, Oct 10 &middot; 10:00 AM &ndash; 12:00 PM</span><br>Downtown square</p>
+      <p style="margin: 6px 0 0; max-width: 46ch; text-wrap: pretty;">Low key. Come whenever, leave whenever.</p>
+      <div style="display: flex; gap: 16px; align-items: center; margin-top: auto; padding-top: 20px; flex-wrap: wrap;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 8px; background: #B34830; color: #FAFAF5; font-weight: 700; font-size: 15.2px; text-decoration: none; box-sizing: border-box;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Add to calendar
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Everything after -->
+  <section style="margin-top: 40px;">
+    <h2 style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #547543; margin: 0 0 4px; padding-bottom: 10px; border-bottom: 2px solid #C14E36;">Later this week</h2>
+
+    <article style="display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 0 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #D4D3C0;">
+      <p style="margin: 0; font-weight: 700; line-height: 1.3;">Sun, Oct 11<br><span style="font-weight: 400; color: #636B59; font-size: 15.2px;">6:30 &ndash; 9:00 PM</span></p>
+      <div style="min-width: 0;">
+        <h3 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; line-height: 1.25; margin: 0 0 2px;">Dinner at Mom&rsquo;s</h3>
+        <p style="margin: 0; font-size: 15.2px; color: #636B59;">Mom&rsquo;s house &middot; Bring nothing. Seriously.</p>
+      </div>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #B34830; font-weight: 700; font-size: 15.2px; text-decoration: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Calendar
+        </a>
+      </div>
+    </article>
+
+    <article style="display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 0 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #D4D3C0;">
+      <p style="margin: 0; font-weight: 700; line-height: 1.3;">Wed, Oct 14<br><span style="font-weight: 400; color: #636B59; font-size: 15.2px;">7:00 PM</span></p>
+      <div style="min-width: 0;">
+        <h3 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; line-height: 1.25; margin: 0 0 2px;">Trivia night</h3>
+        <p style="margin: 0; font-size: 15.2px; color: #636B59;">The usual bar &middot; We will lose, but with dignity.</p>
+      </div>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #B34830; font-weight: 700; font-size: 15.2px; text-decoration: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Calendar
+        </a>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #23281E; font-weight: 700; font-size: 15.2px; text-decoration: none;">
+          <span style="border-bottom: 1px solid #5E864B; padding-bottom: 1px;">Tickets</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <footer style="margin-top: 32px; color: #636B59; font-size: 14.4px;">
+    <p style="margin: 0;">Times are shown in your local time zone (EDT).</p>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+</body>
+</html>

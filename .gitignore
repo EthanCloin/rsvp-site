@@ -9,3 +9,6 @@ node_modules/
 
 # Claude Code worktrees (a nested copy of this repo)
 .claude/worktrees/
+
+# Generated design canvas; re-seed from design/*.dc.html with /design
+design/come-see.html

@@ -1,0 +1,25 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Come See" },
+    { "id": "page-2", "name": "Directions" },
+    { "id": "page-3", "name": "Reference" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html",       "title": "Come See · desktop",   "x": 0,    "y": 0,    "w": 1180, "h": 1220, "page": "page-1" },
+    { "file": "Mobile.dc.html",     "title": "Come See · phone",     "x": 1280, "y": 0,    "w": 390,  "h": 2260, "page": "page-1" },
+    { "file": "DirectionA.dc.html", "title": "A · Tour dates",       "x": 0,    "y": 0,    "w": 960,  "h": 980,  "page": "page-2" },
+    { "file": "DirectionB.dc.html", "title": "B · Week as a grid",   "x": 1060, "y": 0,    "w": 1120, "h": 960,  "page": "page-2" },
+    { "file": "DirectionC.dc.html", "title": "C · Three posters",    "x": 0,    "y": 1260, "w": 1180, "h": 940,  "page": "page-2" },
+    { "file": "DirectionD.dc.html", "title": "D · Next up",          "x": 1280, "y": 1260, "w": 960,  "h": 960,  "page": "page-2" },
+    { "file": "Palette.dc.html",    "title": "Palette & type",       "x": 0,    "y": 0,    "w": 880,  "h": 1560, "page": "page-3" }
+  ],
+  "annotations": [
+    { "id": "note-main", "page": "page-1", "x": 0, "y": -200, "w": 460, "text": "Direction C, rebuilt around the date\nEach card's date is a tab that breaks the photo's bottom edge, so the day reads before the title. The strip under the header is the whole stay: bold green ticks on event days, faint on the rest.\nGreen is the system now (fern-800 headings and buttons, sage ink and meta). Sienna is kept for three things only: the header rule, the next-up date, and Tickets." },
+    { "id": "note-sample", "page": "page-1", "x": 520, "y": -200, "w": 440, "text": "Sample states, not real data\n'Tickets' on Trivia night and 'in 5 days' (as if viewed Mon Oct 5) show the ticketed and next-up states. Photo blocks are placeholders. The phone artboard shows the full page, not one screenful." },
+    { "id": "note-a", "page": "page-2", "x": 0,    "y": -190, "w": 440, "text": "A · Tour dates\nA band's date list: big day numerals, one row per event. The next event gets the sienna.\nTradeoff: photos are a footnote, not the show." },
+    { "id": "note-b", "page": "page-2", "x": 1060, "y": -190, "w": 440, "text": "B · The week as a grid\nEight day columns; each event spans its day. The gaps are the information.\nTradeoff: two layouts to maintain; adjacent events have to stagger." },
+    { "id": "note-c", "page": "page-2", "x": 0,    "y": 1070, "w": 440, "text": "C · Three posters (chosen)\nImage-led cards in a row. Built out on the Come See page with the date tab and the green system." },
+    { "id": "note-d", "page": "page-2", "x": 1280, "y": 1070, "w": 440, "text": "D · Next up\nThe upcoming event as hero with a countdown; the rest queue below.\nTradeoff: two shapes to scan; after the last event it is just a list." }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" />
+  <style>
+    body { margin: 0; }
+    a { color: #B34830; } a:hover { color: #63755E; }
+  </style>
+</helmet>
+
+<div style="background: #EFEFE7; color: #23281E; font-family: Mulish, system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.5; min-height: 100%; box-sizing: border-box;">
+<div style="max-width: 1040px; margin: 0 auto; padding: 48px 40px 64px; box-sizing: border-box;">
+
+  <header style="margin: 0 0 36px;">
+    <p style="margin: 0 0 10px; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #547543;">Come see</p>
+    <h1 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 44px; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; margin: 0 0 10px;">Ethan&rsquo;s week home</h1>
+    <p style="margin: 0; color: #636B59; font-size: 17px; max-width: 56ch; text-wrap: pretty;">I&rsquo;m in town for a week. Here&rsquo;s where I&rsquo;ll be. Come to whatever you can.</p>
+  </header>
+
+  <!-- The week as a grid: 8 day columns, events span the columns they sit in -->
+  <main style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-auto-rows: auto; gap: 0; background: repeating-linear-gradient(to right, #D4D3C0 0 1px, transparent 1px 12.5%); padding-bottom: 24px;">
+
+    <!-- Day header cells -->
+    <div style="grid-column: 1; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #547543;">Sat</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: #23281E;">10</span>
+    </div>
+    <div style="grid-column: 2; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #547543;">Sun</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: #23281E;">11</span>
+    </div>
+    <div style="grid-column: 3; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #636B59;">Mon</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 400; color: #636B59;">12</span>
+    </div>
+    <div style="grid-column: 4; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #636B59;">Tue</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 400; color: #636B59;">13</span>
+    </div>
+    <div style="grid-column: 5; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #547543;">Wed</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; color: #23281E;">14</span>
+    </div>
+    <div style="grid-column: 6; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #636B59;">Thu</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 400; color: #636B59;">15</span>
+    </div>
+    <div style="grid-column: 7; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #636B59;">Fri</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 400; color: #636B59;">16</span>
+    </div>
+    <div style="grid-column: 8; grid-row: 1; padding: 10px 0 12px 12px; border-top: 2px solid #C14E36; border-bottom: 1px solid #D4D3C0; display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #636B59;">Sat</span>
+      <span style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 400; color: #636B59;">17</span>
+    </div>
+
+    <!-- Coffee: Sat, spans 3 columns on row 2 -->
+    <article style="grid-column: 1 / span 3; grid-row: 2; margin: 20px 12px 0 12px; background: #FAFAF5; border: 1px solid #547543; border-radius: 8px; box-shadow: 0 1px 2px rgba(35,40,30,0.05), 0 4px 14px rgba(35,40,30,0.045); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+      <p style="margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #B34830;">Next up &middot; in 5 days</p>
+      <h2 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; line-height: 1.2; margin: 0;">Coffee at the square</h2>
+      <p style="margin: 0; font-size: 15.2px; color: #636B59;"><span style="font-weight: 700; color: #23281E;">10:00 AM &ndash; 12:00 PM</span> &middot; Downtown square</p>
+      <p style="margin: 4px 0 0; font-size: 15.2px; text-wrap: pretty;">Low key. Come whenever, leave whenever.</p>
+      <div style="display: flex; gap: 16px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; background: #B34830; color: #FAFAF5; font-weight: 700; font-size: 15.2px; text-decoration: none; box-sizing: border-box;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Add to calendar
+        </a>
+      </div>
+    </article>
+
+    <!-- Dinner: Sun, spans 3 columns on row 3 -->
+    <article style="grid-column: 2 / span 3; grid-row: 3; margin: 20px 12px 0 12px; background: #FAFAF5; border: 1px solid #547543; border-radius: 8px; box-shadow: 0 1px 2px rgba(35,40,30,0.05), 0 4px 14px rgba(35,40,30,0.045); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+      <p style="margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #547543;">Sunday</p>
+      <h2 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; line-height: 1.2; margin: 0;">Dinner at Mom&rsquo;s</h2>
+      <p style="margin: 0; font-size: 15.2px; color: #636B59;"><span style="font-weight: 700; color: #23281E;">6:30 &ndash; 9:00 PM</span> &middot; Mom&rsquo;s house</p>
+      <p style="margin: 4px 0 0; font-size: 15.2px; text-wrap: pretty;">Bring nothing. Seriously.</p>
+      <div style="display: flex; gap: 16px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; background: #B34830; color: #FAFAF5; font-weight: 700; font-size: 15.2px; text-decoration: none; box-sizing: border-box;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Add to calendar
+        </a>
+      </div>
+    </article>
+
+    <!-- Trivia: Wed, spans 3 columns on row 2 (no overlap with coffee, which ends at col 4) -->
+    <article style="grid-column: 5 / span 3; grid-row: 2; margin: 20px 12px 0 12px; background: #FAFAF5; border: 1px solid #547543; border-radius: 8px; box-shadow: 0 1px 2px rgba(35,40,30,0.05), 0 4px 14px rgba(35,40,30,0.045); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+      <p style="margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #547543;">Wednesday</p>
+      <h2 style="font-family: Domine, Georgia, 'Times New Roman', serif; font-size: 21px; font-weight: 600; line-height: 1.2; margin: 0;">Trivia night</h2>
+      <p style="margin: 0; font-size: 15.2px; color: #636B59;"><span style="font-weight: 700; color: #23281E;">7:00 PM</span> &middot; The usual bar</p>
+      <p style="margin: 4px 0 0; font-size: 15.2px; text-wrap: pretty;">We will lose, but with dignity.</p>
+      <div style="display: flex; gap: 16px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; background: #B34830; color: #FAFAF5; font-weight: 700; font-size: 15.2px; text-decoration: none; box-sizing: border-box;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"></path></svg>
+          Add to calendar
+        </a>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 6px; color: #23281E; font-weight: 700; font-size: 15.2px; text-decoration: none; border-bottom: 1px solid #5E864B; padding-bottom: 1px;">
+          Tickets
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </a>
+      </div>
+    </article>
+
+  </main>
+
+  <footer style="margin-top: 32px; color: #636B59; font-size: 14.4px;">
+    <p style="margin: 0;">Times are shown in your local time zone (EDT).</p>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+</body>
+</html>

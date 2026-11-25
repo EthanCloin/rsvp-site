@@ -1,26 +1,29 @@
 {
-  "title": "Ethan's Jax Visit",
-  "intro": "I'm in town this week! Catch me at one of these public events or set some time up with me on the side ;)",
+  "title": "Ethan in Florida",
+  "intro": "I'm in Florida Nov 26 through Dec 9, mostly in Jacksonville with a festival weekend in Boca. Catch me at one of these public events or set some time up with me on the side ;)",
+  "stay": {
+    "from": "2026-11-26",
+    "to": "2026-12-09"
+  },
   "events": [
     {
-      "id": "fin-fest",
-      "title": "Florida Fin Fest",
-      "start": "2026-09-12T13:00:00-04:00",
-      "end": "2026-09-12T21:00:00-04:00",
-      "location": "Seawalk Pavilion, Jacksonville Beach",
-      "address": "75 1st St N, Jacksonville Beach, FL 32250",
-      "description": "Outdoor ocean-conservation and music festival on the beach. Andy Frasco & The U.N., Magic City Hippies, Future Joy, Supertaste and more. General admission is free and it's all ages; VIP upgrades are sold separately. I'll be there from early afternoon into the evening.",
-      "url": "https://flfinfest.com/jacksonville/home",
-      "tickets_url": "https://www.eventliveus.com/event/10207/florida-fin-fest-2026",
-      "image": "img/fin-fest.jpg",
-      "image_alt": "Florida Fin Fest 2026 lineup poster, illustrated with reef fish and a shark",
-      "image_credit": "Florida Fin Fest official 2026 lineup poster (flfinfest.com)"
+      "id": "shuffle-and-flow-nov-29",
+      "title": "Shuffle & Flow Under the Bridge",
+      "start": "2026-11-29T17:30:00-05:00",
+      "end": "2026-11-29T21:00:00-05:00",
+      "location": "Riverside Arts Market",
+      "address": "715 Riverside Ave, Jacksonville, FL 32204",
+      "description": "Shuffle dancing and flow arts under the Fuller Warren Bridge, hosted by Flowstate Syndicate. Bring a prop or your dancing shoes, or just come hang out by the river.",
+      "url": "https://www.instagram.com/904flowmies",
+      "image": "img/riverside-flow.png",
+      "image_alt": "Map of Riverside Arts Market under the Fuller Warren Bridge on the St. Johns River",
+      "image_credit": "Map data (c) OpenStreetMap contributors"
     },
     {
-      "id": "riverside-flow",
-      "title": "Riverside Flow meetup",
-      "start": "2026-09-15T19:00:00-04:00",
-      "end": "2026-09-15T23:00:00-04:00",
+      "id": "flow-night-dec-1",
+      "title": "Flow night",
+      "start": "2026-12-01T20:00:00-05:00",
+      "end": "2026-12-01T23:00:00-05:00",
       "location": "Riverside Arts Market",
       "address": "715 Riverside Ave, Jacksonville, FL 32204",
       "description": "Flow arts meetup under the Fuller Warren Bridge. Bring a prop and play, learn something new, or just come sit by the river and watch. Free, no ticket.",
@@ -30,29 +33,15 @@
       "image_credit": "Map data (c) OpenStreetMap contributors"
     },
     {
-      "id": "king-street-bar-crawl",
-      "title": "King Street Bar Crawl",
-      "start": "2026-09-18T20:00:00-04:00",
-      "end": "2026-09-19T01:00:00-04:00",
-      "location": "Rogue, King Street, Jacksonville",
-      "address": "927 King St, Jacksonville, FL 32204",
-      "description": "Join me starting at Rogue for a chill evening of alcohol abuse and catching up with lovely friends. Throw a ring, down a shot, and follow along to wherever the night takes us.",
-      "image": "img/rogue-bar.webp",
-      "image_alt": "Illuminated marquee sign reading ROGUE hanging inside the bar, with exposed brick and string lights",
-      "image_credit": "Google Maps user photo"
-    },
-    {
-      "id": "bonnie-x-clyde",
-      "title": "Bonnie x Clyde at Decca Live",
-      "start": "2026-09-19T22:00:00-04:00",
-      "end": "2026-09-20T03:00:00-04:00",
-      "location": "Decca Live, downtown Jacksonville",
-      "address": "323 E Bay St, Jacksonville, FL 32202",
-      "description": "Vocal-driven electronic DJ set at Decca. 18+, doors at 10 and it runs late. Ticketed - grab one before the night of.",
-      "tickets_url": "https://www.eventbrite.com/e/bonnie-x-clyde-decca-live-tickets-1996059472615",
-      "image": "img/bonnie-x-clyde.jpg",
-      "image_alt": "Bonnie x Clyde tour flyer for Saturday, September 19, 2026 at Decca Live, Jacksonville",
-      "image_credit": "Bonnie x Clyde / Decca Live official event flyer (via Eventbrite)"
+      "id": "cyclops-cove-2026",
+      "title": "Cyclops Cove 4",
+      "start": "2026-12-04T14:00:00-05:00",
+      "end": "2026-12-06T23:59:00-05:00",
+      "location": "Sunset Cove Amphitheater, Boca Raton",
+      "address": "20405 Amphitheater Cir, Boca Raton, FL 33498",
+      "description": "Three-day bass music festival from Bassrush. 18+ and ticketed, with three-day passes and single days. I'll be there all weekend.",
+      "url": "https://www.insomniac.com/events/festivals/boca-raton-fl/",
+      "tickets_url": "https://cyclopscove.frontgatetickets.com/"
     }
   ]
 }

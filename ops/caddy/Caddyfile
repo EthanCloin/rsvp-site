@@ -1,0 +1,31 @@
+# /etc/caddy/Caddyfile on base (Hostinger KVM): come-see on the open web.
+#
+# Caddy is the web front: it answers on ports 80 and 443, gets and renews the
+# HTTPS certificate for come-see.ethancloin.xyz by itself (Let's Encrypt), and
+# hands every request to the app. ops/SETUP-base.md step 4 installs it.
+#
+# BASE_PUBLIC_IP is replaced with base's public IPv4 address at install time.
+# It must stay a specific address: tailscaled already holds port 443 on base's
+# tailnet addresses (Funnel for the Vault MCP), and listening on "every
+# address" would collide with it.
+{
+	default_bind BASE_PUBLIC_IP
+}
+
+come-see.ethancloin.xyz {
+	# Compress text responses.
+	encode gzip zstd
+
+	# events.json changes often; browsers must re-check it on every load.
+	header /events.json Cache-Control "no-cache"
+
+	# Junk bodies never reach the app (the app itself caps them at 1 KiB).
+	request_body /api/* {
+		max_size 4KB
+	}
+
+	# Everything goes to gunicorn over the socket systemd creates for
+	# come-see.service. Flask serves the static site as well as /api/, so a
+	# deploy (git pull + restart) updates both.
+	reverse_proxy unix//run/come-see/gunicorn.sock
+}

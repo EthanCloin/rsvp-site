@@ -1,8 +1,24 @@
 {
   "title": "Ethan in Florida",
   "intro": "I'm in Florida Nov 26 through Dec 9, mostly in Jacksonville with a festival weekend in Boca. Catch me at one of these public events or set some time up with me on the side ;)",
-  "stay": { "from": "2026-11-26", "to": "2026-12-09" },
+  "stay": {
+    "from": "2026-11-26",
+    "to": "2026-12-09"
+  },
   "events": [
+    {
+      "id": "shuffle-and-flow-nov-29",
+      "title": "Shuffle & Flow Under the Bridge",
+      "start": "2026-11-29T17:30:00-05:00",
+      "end": "2026-11-29T21:00:00-05:00",
+      "location": "Riverside Arts Market",
+      "address": "715 Riverside Ave, Jacksonville, FL 32204",
+      "description": "Shuffle dancing and flow arts under the Fuller Warren Bridge, hosted by Flowstate Syndicate. Bring a prop or your dancing shoes, or just come hang out by the river.",
+      "url": "https://www.instagram.com/904flowmies",
+      "image": "img/riverside-flow.png",
+      "image_alt": "Map of Riverside Arts Market under the Fuller Warren Bridge on the St. Johns River",
+      "image_credit": "Map data (c) OpenStreetMap contributors"
+    },
     {
       "id": "flow-night-dec-1",
       "title": "Flow night",

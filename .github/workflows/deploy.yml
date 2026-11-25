@@ -1,0 +1,58 @@
+# Deploy come-see to base (Hostinger KVM) over Tailscale.
+#
+# On every push to main (or a manual run), the runner joins the tailnet as
+# tag:ci, SSHes in as deploy, and runs ops/deploy.sh, which pulls, installs
+# requirements, restarts come-see and fails the job if the health check fails.
+#
+# The tailnet policy lets tag:ci reach only base, only on tcp/22.
+#
+# Secrets (repo Settings > Secrets and variables > Actions):
+#   TS_OAUTH_CLIENT_ID, TS_OAUTH_SECRET  Tailscale OAuth client, auth_keys write, tag:ci
+#   DEPLOY_SSH_KEY                       private key for deploy@base (OpenSSH format)
+#   DEPLOY_HOST                          base's tailnet name
+#   DEPLOY_KNOWN_HOSTS                   `ssh-keyscan <DEPLOY_HOST>` output
+#
+# base needs the one-time setup in ops/SETUP.md (checkout, venv, unit,
+# sudoers) before this can succeed.
+name: Deploy to base
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-base
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Join the tailnet as tag:ci
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Set up SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Run ops/deploy.sh on base
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "deploy@${DEPLOY_HOST}" /home/deploy/rsvp-site/ops/deploy.sh
